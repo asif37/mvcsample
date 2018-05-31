@@ -1,0 +1,157 @@
+﻿@model List<AgingInHome.Models.AppointmentModel>
+@using AgingInHome.DAL;
+    @{
+        var AllLisintg = new AgingInHomeContext().ProviderListings.ToList();
+}
+<div class="col-lg-12 col-sm-12 col-xs-12">
+    <div class="innerServiceRequest">
+        <span><i class="fa fa-pencil-square-o"></i>  &nbsp; Appointments</span>
+        @*<a href="#"><span class="pull-right">View all &nbsp;<i class="fa fa-angle-double-right" aria-hidden="true"></i></span></a>*@
+        <hr />
+        @if (Model.Count > 0)
+        {
+            <table class="table table-striped table-hover table-responsive table-bordered AdminServiceRequesttable">
+                <tr>
+                    <th>Providers Name</th>
+                    <th>Appointment Date</th>
+                    <th>Phone Number</th>
+                    <th>Best Time</th>
+                    <th>Status</th>
+                    <th>Cancel/New</th>
+                </tr>
+                @foreach (var appointments in Model)
+                {
+
+                    <tr>
+                        <td>@AllLisintg.FirstOrDefault(s=>s.UserId==appointments.ProviderId).CompanyName</td>
+                        <td>@appointments.ServiceDate</td>
+                        <td>
+                            @AllLisintg.FirstOrDefault(s => s.UserId == appointments.ProviderId).ProviderContactNumber
+                        </td>
+                        <td>
+                            @appointments.BestTime
+                        </td>
+                        @if (appointments.AppointmentSendBy == 1)
+                        {
+                            <td>
+                                @if (appointments.IsCancel == true)
+                                {
+                                    <span>Cancelled</span>
+                                }
+                                else if (appointments.IsProviderAccept == null)
+                                {
+                                    <span>Pending</span>
+                                }
+                                else if (appointments.IsProviderAccept == true)
+                                {
+                                    <span>Accepted</span>
+                                }
+                                else if (appointments.IsProviderAccept == false)
+                                {
+                                    <span>Rejected</span>
+                                }
+                            </td>
+
+
+
+                            if (appointments.IsCancel == true)
+                            {
+                                <td style="background-color: red;color: white;">
+                                    <text>Appointment Cancelled</text>
+                                </td>
+                            }
+
+                            else if (appointments.IsProviderAccept == false)
+                            {
+                                <td style="background-color:#F0A661;color: white;">
+                                    <text>Appointment Rejected</text>
+                                </td>
+                            }
+                            else if (appointments.IsProviderAccept == null)
+                            {
+                                <td style="background-color:deeppink;color: white;">
+                                    <text>Waiting for Provider</text>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <form id="@appointments.AppointmentId">
+                                        <input type="button" name="" value="Cancel Appointment" class="btn btn-danger cancelAppointment" id=@appointments.AppointmentId />
+
+                                        @Html.Hidden("ConsumerId", appointments.ConsumerId)
+                                        @Html.Hidden("ProviderId", appointments.ProviderId)
+                                        @Html.Hidden("ServiceDate", appointments.ServiceDate, new { @class = "servicedate" + appointments.AppointmentId })
+                                        @Html.Hidden("BestTime", appointments.BestTime, new { @class = "besttime" + appointments.AppointmentId })
+                                        @Html.Hidden("ServiceRequestDetailsId", appointments.ServiceRequestDetailsId)
+                                        @Html.Hidden("AppointmentId", appointments.AppointmentId)
+                                        <input type="submit" name="" value="New Appointment" class="btn btn-info newappointment" id=@appointments.AppointmentId />
+                                    </form>
+
+                                    @*@Html.ActionLink("Cancel Appointment","","", new { @class = "btn btn-danger cancelAppointment", @id = appointments.AppointmentId })*@
+                                    @* <text> &nbsp;</text>   @Html.ActionLink("New Appointment", "ServiceRequestDelete", "Consumer", new { @RequestId = appointments.AppointmentId }, new { @class = "btn btn-info" })*@
+                                </td>
+                            }
+
+                        }
+                        else
+                        {
+                            if (appointments.IsCancel == true)
+                            {
+                                <td>Cancelled</td>
+                                <td style="background-color: red;color: white;">
+                                    <text>Appointment Cancelled</text>
+                                </td>
+                            }
+                            else if (appointments.IsConsumerAccept == null)
+                            {
+                                <td>Pending</td>
+                                <td>
+                                    <input type="button" name="" value="Accept Appointment" class="btn btn-success AcceptAppointment" id=@appointments.AppointmentId />
+                                    <input type="button" name="" value="Reject Appointment" class="btn btn-danger RejectAppointment" id=@appointments.AppointmentId />
+                                </td>
+                            }
+                            else if (appointments.IsConsumerAccept == false)
+                            {
+                                <td>Rejected</td>
+                                <td style="background-color:#F0A661;color: white;">
+                                    <text>Appointment Rejected</text>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>Accepted</td>
+                                <td>
+                                    <form id="@appointments.AppointmentId">
+                                        <input type="button" name="" value="Cancel Appointment" class="btn btn-danger cancelAppointment" id=@appointments.AppointmentId />
+
+                                        @Html.Hidden("ConsumerId", appointments.ConsumerId)
+                                        @Html.Hidden("ProviderId", appointments.ProviderId)
+                                        @Html.Hidden("ServiceDate", appointments.ServiceDate, new { @class = "servicedate" + appointments.AppointmentId })
+                                        @Html.Hidden("BestTime", appointments.BestTime, new { @class = "besttime" + appointments.AppointmentId })
+                                        @Html.Hidden("ServiceRequestDetailsId", appointments.ServiceRequestDetailsId)
+                                        @Html.Hidden("AppointmentId", appointments.AppointmentId)
+                                        <input type="submit" name="" value="New Appointment" class="btn btn-info newappointment" id=@appointments.AppointmentId />
+                                    </form>
+
+                                    @*@Html.ActionLink("Cancel Appointment","","", new { @class = "btn btn-danger cancelAppointment", @id = appointments.AppointmentId })*@
+                                    @* <text> &nbsp;</text>   @Html.ActionLink("New Appointment", "ServiceRequestDelete", "Consumer", new { @RequestId = appointments.AppointmentId }, new { @class = "btn btn-info" })*@
+                                </td>
+                            }
+
+                        }
+
+                    </tr>
+                }
+
+
+            </table>
+        }
+        else
+        {
+            <center><h3>No Appointment Found</h3>  </center>
+        }
+
+    </div>
+</div>
+@Html.Hidden("Appointmentcountfeild", Model.Count())

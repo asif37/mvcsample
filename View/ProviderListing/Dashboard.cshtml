@@ -1,0 +1,758 @@
+﻿@using Microsoft.AspNet.Identity
+@using AgingInHome.DAL
+@using AgingInHome.Models
+@model AgingInHome.Models.ProviderListingModel
+@{
+    ViewBag.Title = "Dashboard";
+    var listing = 0;
+    var SendMsg = 0;
+    var recMsg = 0;
+    var ArchiveMsg = 0;
+    var userid = User.Identity.GetUserId();
+    var alluserlist = (List<AspNetUser>)ViewBag.allusers;
+    var AllListing = (List<ProviderListingModel>)ViewBag.alllisting;
+    var curetuser = "";
+}
+
+<div class="Consumercontainer">
+    <div class="row">
+        <div class="col-lg-3 col-sm-4 col-xs-12">
+            <div class="AdminInbox">
+                <span class="fa fa-pencil fa-4x img-circle"></span>
+                <span class="pull-right inboxcount" style="font-size:x-large">@listing</span>
+                <br />
+                <div>
+                    <h4>Inbox</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-4 col-xs-12">
+            <div class="AdminAppointment">
+                <span class="fa fa-cog fa-4x img-circle"></span>
+                <span class="pull-right appointmentCount" style="font-size:x-large">22</span>
+                <br />
+                <div>
+                    <h4>Appointment</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row" id="AdminInbox">
+        <div class="col-lg-3 col-sm-3 col-xs-12">
+            @*<center>
+                    <div class="btn btn-danger" style="width:70%"><i class="fa fa-pencil-square-o"></i>&nbsp; Compose</div>
+                </center>
+                <hr />*@
+            <div class="btn btn-primary Inboxbtn AdminInboxbtn" style="width:100%"><span class="pull-left"><i class="fa fa-inbox"></i> &nbsp;Inbox</span><span class="pull-right inboxcount"></span></div>
+            @*<div class="btn btn-primary Inboxbtn" style="width:100%;background:white;color:black"><span class="pull-left"></i> &nbsp;Received</span><span class="pull-right Receivedcount"></span></div>*@
+            <div class="btn btn-primary Inboxbtn" style="width:100%;background:white;color:black"><span class="pull-left"></i> &nbsp;Sent</span><span class="pull-right Sentcount"></span></div>
+            <div class="btn btn-primary Inboxbtn" style="width:100% ;background:white;color:black"><span class="pull-left"></i> &nbsp;Archived</span><span class="pull-right Archivedcount"></span></div>
+            @*<div class="btn btn-primary Inboxbtn admininboxbtn" style="width:100%"><span class="pull-left"><i class="fa fa-inbox"></i> &nbsp;Inbox</span><span class="pull-right inboxcount"></span></div>
+                <div class="btn btn-primary Inboxbtn" style="width:100%;background:white;color:black"><span class="pull-left"></i> &nbsp;Received</span><span class="pull-right Receivedcount"></span></div>
+                <div class="btn btn-primary Inboxbtn" style="width:100%;background:white;color:black"><span class="pull-left"></i> &nbsp;Sent</span><span class="pull-right Sentcount"></span></div>
+                <div class="btn btn-primary Inboxbtn" style="width:100% ;background:white;color:black"><span class="pull-left"></i> &nbsp;Archived</span><span class="pull-right Archivedcount"></span></div>*@
+        </div>
+        <div class="col-lg-9 col-sm-9 col-xs-12">
+            <div style="border:1px solid #EDEDED">
+                <div class="msgDetails"></div>
+
+                <table class="table table-responsive table-hover table-striped table-bordered Inbox">
+                    <tr>
+                        <td colspan="4"><b>Inbox</b></td>
+                    </tr>
+                    @foreach (var detail in Model.ServiceRequestDetails)
+                    {
+                        if (detail.Inboxes.Where(d => d.IsProviderArchive == true).Count() < 1)
+                        {
+                            foreach (var item3 in detail.Inboxes)
+                            {
+
+                                <tr class="openmsg" data-detailId="@item3.ServiceRequestDetailsId">
+                                    <td style="width:3%">@Html.CheckBox("checkbox")</td>
+                                    @if (item3.IsRead == true)
+                                    {
+                                        if (item3.SenderId != userid)
+                                        {
+                                            <td><b>@alluserlist.FirstOrDefault(d => d.Id == item3.SenderId).UserName.Split('@')[0]</b></td>
+                                            <td>@item3.Subject</td>
+
+                                        }
+                                        if (item3.RecipientId != userid)
+                                        {
+                                            <td><b>@alluserlist.FirstOrDefault(d => d.Id == item3.RecipientId).UserName.Split('@')[0]</b></td>
+                                            <td>@item3.Subject</td>
+
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        if (item3.SenderId != userid)
+                                        {
+                                            <td><b>@alluserlist.FirstOrDefault(d => d.Id == item3.SenderId).UserName.Split('@')[0]</b></td>
+                                            <td><b>@item3.Subject</b></td>
+
+                                        }
+                                        if (item3.RecipientId != userid)
+                                        {
+                                            <td><b>@alluserlist.FirstOrDefault(d => d.Id == item3.RecipientId).UserName.Split('@')[0]</b></td>
+                                            <td><b>@item3.Subject</b></td>
+
+                                        }
+                                    }
+
+                                    <td style="width:20%"><b>@*<i class="fa fa-paperclip fa-2x"></i> &nbsp;*@ @item3.SentDate</b></td>
+                                </tr>
+
+                                listing = listing + 1;
+                                break;
+
+                            }
+                        }
+                    }
+                    @foreach (var Allmessages in (List<CustomeMessagesModel>)ViewBag.CustomeMessages)
+                    {
+                        foreach (var item3 in Allmessages.AllMessages)
+                        {
+
+                            <tr class="openmsg" data-detailId="@item3.ConversationId">
+
+                                @if (item3.IsRead == true)
+                                {
+                                    if (item3.SenderId != userid)
+                                    {
+                                        <td><b>@alluserlist.FirstOrDefault(d => d.Id == item3.SenderId).UserName.Split('@')[0]</b></td>
+                                        <td>@item3.Subject</td>
+
+                                    }
+                                    if (item3.RecipientId != userid)
+                                    {
+                                        <td><b>@alluserlist.FirstOrDefault(d => d.Id == item3.RecipientId).UserName.Split('@')[0]</b></td>
+                                        <td>@item3.Subject</td>
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (item3.SenderId != userid)
+                                    {
+                                        <td><b>@alluserlist.FirstOrDefault(d => d.Id == item3.SenderId).UserName.Split('@')[0]</b></td>
+                                        <td><b>@item3.Subject</b></td>
+
+                                    }
+                                    if (item3.RecipientId != userid)
+                                    {
+                                        <td><b>@alluserlist.FirstOrDefault(d => d.Id == item3.RecipientId).UserName.Split('@')[0]</b></td>
+                                        <td><b>@item3.Subject</b></td>
+
+                                    }
+                                }
+
+                                <td style="width:20%"><b>@*<i class="fa fa-paperclip fa-2x"></i> &nbsp;*@ @item3.SentDate</b></td>
+                            </tr>
+
+                            listing = listing + 1;
+                            break;
+
+                        }
+                    }
+
+
+                </table>
+                <table class="table table-responsive table-hover table-striped table-bordered Sent">
+                    <tr>
+                        <td colspan="4"><b>sent</b></td>
+                    </tr>
+                    @foreach (var detail in Model.ServiceRequestDetails)
+                    {
+                        if (detail.Inboxes.Where(d => d.SenderId == User.Identity.GetUserId()).Count() > 0)
+                        {
+                            foreach (var item3 in detail.Inboxes)
+                            {
+
+                                <tr class="sendmsg" data-detailId="@item3.ServiceRequestDetailsId" data-type="ServiceRequest">
+
+                                    @*@if (item3.IsRead == true)
+                                        {*@
+                                    <td>@detail.ProviderListing.CompanyName</td>
+                                    <td>@item3.Subject</td>
+                                    @*}
+                                        else
+                                        {
+                                            <td><b>@detail.ProviderListing.CompanyName</b></td>
+                                            <td><b>@item3.Subject</b></td>
+                                        }*@
+
+                                    <td style="width:25%">@*<i class="fa fa-paperclip fa-2x"></i>*@ &nbsp;@item3.SentDate</td>
+                                </tr>
+                                SendMsg = SendMsg + 1;
+
+                                break;
+
+                            }
+                        }
+                    }
+                    @foreach (var item in (List<CustomeMessagesModel>)ViewBag.CustomeMessages)
+                    {
+                        if (item.AllMessages.Where(d => d.SenderId == User.Identity.GetUserId()).Count() > 0)
+                        {
+                            foreach (var item3 in item.AllMessages)
+                            {
+
+                                <tr class="sendmsg" data-detailId="@item3.ConversationId" data-type="Conversation">
+
+                                    @{
+                                        var finduser = alluserlist.Where(s => s.Id == item3.RecipientId || s.Id == item3.SenderId).FirstOrDefault();
+
+                                        if (userid != item3.RecipientId)
+                                        {
+                                            finduser = alluserlist.Where(s => s.Id == item3.RecipientId).FirstOrDefault();
+                                        }
+                                        else
+                                        {
+                                            finduser = alluserlist.Where(s => s.Id == item3.SenderId).FirstOrDefault();
+                                        }
+
+                                    }
+                                    @if (finduser != null && finduser.UserName.Split('@')[0] != "TestAdmin")
+                                    {
+                                        <td>@finduser.UserName.Split('@')[0]</td>;
+
+                                    }
+                                    else
+                                    {
+                                        //companyname = alluserlist.Where(s => s.Id == item3.RecipientId || s.Id == item3.SenderId).FirstOrDefault().Email.Split('@')[0];
+                                        <td>Admin</td>;
+
+                                    }
+                                    @*@if (item3.IsRead == true)
+                                        {*@
+
+
+                                    <td>@item3.Subject</td>
+                                    @*}
+                                        else
+                                        {
+                                            <td><b>@item2.ProviderListing.CompanyName</b></td>
+                                            <td><b>@item3.Subject</b></td>
+                                        }*@
+
+                                    <td style="width:25%">@*<i class="fa fa-paperclip fa-2x"></i>*@ &nbsp;@item3.SentDate</td>
+                                </tr>
+
+
+
+                                                    SendMsg = SendMsg + 1;
+
+                                                    //if (item2.Inboxes.Where(d => d.IsArchive == true).Count() > 0)
+                                                    //{
+                                                    //    ArchiveMsg = ArchiveMsg + 1;
+                                                    //}
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                </table>
+                <table class="table table-responsive table-hover table-striped table-bordered Received">
+                    <tr>
+                        <td colspan="4"><b>Received</b></td>
+                    </tr>
+                    @foreach (var detail in Model.ServiceRequestDetails)
+                    {
+
+                        if (detail.Inboxes.Where(d => d.RecipientId == User.Identity.GetUserId()).Count() > 0)
+                        {
+                            foreach (var item3 in detail.Inboxes)
+                            {
+
+                                <tr class="recievemsg" data-detailId="@item3.ServiceRequestDetailsId">
+
+                                    @if (item3.IsRead == true)
+                                    {
+                                        <td>@detail.ProviderListing.CompanyName</td>
+                                        <td>@item3.Subject</td>
+                                    }
+                                    else
+                                    {
+                                        <td><b>@detail.ProviderListing.CompanyName</b></td>
+                                        <td><b>@item3.Subject</b></td>
+                                    }
+
+                                    <td style="width:25%">@*<i class="fa fa-paperclip fa-2x"></i>*@ &nbsp;<b>@item3.SentDate</b> </td>
+                                </tr>
+
+
+
+                                recMsg = recMsg + 1;
+
+                                //if (item2.Inboxes.Where(d => d.IsArchive == true).Count() > 0)
+                                //{
+                                //    ArchiveMsg = ArchiveMsg + 1;
+                                //}
+
+                                break;
+                            }
+                        }
+                    }
+
+                </table>
+                <table class="table table-responsive table-hover table-striped table-bordered Archived">
+                    <tr>
+                        <td colspan="4"><b>Archive</b></td>
+                    </tr>
+                    @foreach (var detail in Model.ServiceRequestDetails)
+                    {
+                        if (detail.Inboxes.Where(d => d.IsProviderArchive == true).Count() > 0)
+                        {
+                            foreach (var item3 in detail.Inboxes)
+                            {
+
+                                <tr class="archivemsg" data-detailId="@item3.ServiceRequestDetailsId">
+
+                                    @*@if (item3.IsRead == true)
+                                        {*@
+                                    @if (item3.SenderId != userid)
+                                    {
+                                        <td>@alluserlist.FirstOrDefault(d => d.Id == item3.SenderId).UserName.Split('@')[0]</td>
+
+                                    }
+                                    @if (item3.RecipientId != userid)
+                                    {
+                                        <td>@alluserlist.FirstOrDefault(d => d.Id == item3.RecipientId).UserName.Split('@')[0]</td>
+                                    }
+                                    <td>@item3.Subject</td>
+                                    @*}
+                                        else
+                                        {
+                                            <td><b>@detail.ProviderListing.CompanyName</b></td>
+                                            <td><b>@item3.Subject</b></td>
+                                        }*@
+
+                                    <td style="width:25%">@*<i class="fa fa-paperclip fa-2x"></i>*@ &nbsp;@item3.SentDate</td>
+                                </tr>
+
+
+
+                                ArchiveMsg = ArchiveMsg + 1;
+
+                                //if (item2.Inboxes.Where(d => d.IsArchive == true).Count() > 0)
+                                //{
+                                //    ArchiveMsg = ArchiveMsg + 1;
+                                //}
+
+                                break;
+                            }
+                        }
+                    }
+                    @foreach (var item in (List<CustomeMessagesModel>)ViewBag.CustomeMessages)
+                    {
+                        if (item.AllMessages.Where(d => d.IsProviderArchive == true).Count() > 0)
+                        {
+                            foreach (var item3 in item.AllMessages)
+                            {
+
+                                <tr class="archivemsg" data-detailId="@item3.ConversationId">
+
+                                    @{
+                                        var finduser = alluserlist.Where(s => s.Id == item3.RecipientId || s.Id == item3.SenderId).FirstOrDefault();
+
+                                        if (userid != item3.RecipientId)
+                                        {
+                                            finduser = alluserlist.Where(s => s.Id == item3.RecipientId).FirstOrDefault();
+                                        }
+                                        else
+                                        {
+                                            finduser = alluserlist.Where(s => s.Id == item3.SenderId).FirstOrDefault();
+                                        }
+
+                                    }
+                                    @if (finduser != null && finduser.UserName.Split('@')[0] != "TestAdmin")
+                                    {
+                                        <td>@finduser.UserName.Split('@')[0]</td>;
+
+                                    }
+                                    else
+                                    {
+                                        //companyname = alluserlist.Where(s => s.Id == item3.RecipientId || s.Id == item3.SenderId).FirstOrDefault().Email.Split('@')[0];
+                                        <td>Admin</td>;
+
+                                    }
+                                    @*@if (item3.IsRead == true)
+                                        {*@
+
+
+                                    <td>@item3.Subject</td>
+                                    @*}
+                                        else
+                                        {
+                                            <td><b>@item2.ProviderListing.CompanyName</b></td>
+                                            <td><b>@item3.Subject</b></td>
+                                        }*@
+
+                                    <td style="width:25%">@*<i class="fa fa-paperclip fa-2x"></i>*@ &nbsp;@item3.SentDate</td>
+                                </tr>
+
+
+
+                                                    ArchiveMsg = ArchiveMsg + 1;
+
+                                                    //if (item2.Inboxes.Where(d => d.IsArchive == true).Count() > 0)
+                                                    //{
+                                                    //    ArchiveMsg = ArchiveMsg + 1;
+                                                    //}
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                </table>
+
+            </div>
+        </div>
+        @Html.Hidden("inboxcountfeild", listing)
+        @Html.Hidden("Sendcountfeild", SendMsg)
+        @Html.Hidden("archivecountfeild", ArchiveMsg)
+        @Html.Hidden("RecCountfeild", recMsg)
+
+    </div>
+    <div class="row" id="appointments">
+
+    </div>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="background: #5BC115;color: white;">
+                    <h4 class="modal-title">New Appointment Detail</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        @Html.Hidden("formid")
+                        @Html.Label("Service Date")
+                        @Html.TextBox("NewServiceDate", "", new { @class = "form-control newservicedateclass" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Best Time")
+                        <select class="form-control newProviderservicebestimeclass" id="NewBestTime">
+                            <option value="">When is the best time for a service providers to reach you?</option>
+                            <option value="Anytime">Anytime</option>
+                            <option value="Afternoon">Afternoon </option>
+                            <option value="Morning">Morning</option>
+                            <option value="Evening">Evening</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-success" name="name" value="Send New Appointment" id="sendnewAppointment" />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+    hr {
+        margin-top: 10px;
+    }
+
+    table td {
+        cursor: pointer;
+    }
+</style>
+<script>
+    $(function () {
+        setInterval(function () {
+            
+
+            if ($(".Inbox").is(':visible')) {
+                $(".AdminInbox").trigger("click");
+            }
+        }, 30000);
+        $("#appointments").hide();
+        $("[name='NewServiceDate']").datepicker({
+            minDate: new Date()
+        });
+        $.ajax({
+            url: "@Url.Action("GetinboxDetail", "ProviderListing")",
+            //data:{model=@Model.ServiceRequestDetails.ToList()},
+            success: function (result) {
+                result = '<tr><td colspan="4"><b>Inbox</b></td></tr>' + result;
+                $(".Inbox").empty();
+                $(".Inbox").html(result);
+                $(".inboxcount").empty();
+                $(".inboxcount").append($("#inboxcountfeild").val());
+                $(".msgDetails").hide();
+                $(".Inbox").show();
+
+            }
+        });
+        $.ajax({
+            url: "@Url.Action("GetAllProviderAppointments", "ProviderListing")",
+            success: function (result) {
+                $("#appointments").html(result);
+                $(".appointmentCount").empty();
+                $(".appointmentCount").append($("#Appointmentcountfeild").val());
+
+
+            }
+        });
+        $(".Inboxbtn").click(function () {
+
+            $(".Inboxbtn").css({ "background-color": "white", "color": "black" });
+            $(this).css({ "background-color": "#4F81BC", "color": "White" });
+            var divname = $(this).children().first().text().trim();
+            $("table").hide();
+            $("#appointments").hide();
+            $("." + divname).show();
+            $(".msgDetails").hide();
+        });
+        $(".AdminAppointment").click(function () {
+            $.ajax({
+                url: "@Url.Action("GetAllProviderAppointments", "ProviderListing")",
+                success: function (result) {
+                    $("table").hide();
+                    $("#AdminInbox").hide();
+                    $("#appointments").html(result);
+                    $("#appointments").show();
+                    $(".appointmentCount").empty();
+                    $(".appointmentCount").append($("#Appointmentcountfeild").val());
+                }
+            });
+        });
+        $("table").hide();
+        $(".Inbox").show();
+        $(".inboxcount").append($("#inboxcountfeild").val());
+        //$(".Receivedcount").append($("#RecCountfeild").val());
+        //$(".Sentcount").append($("#Sendcountfeild").val());
+        //$(".Archivedcount").append($("#archivecountfeild").val());
+        $(".AdminInboxbtn,.AdminInbox").click(function () {
+            $("table").hide();
+            $(".Inboxbtn").css({ "background-color": "white", "color": "black" });
+            $(".AdminInboxbtn").css({ "background-color": "#4F81BC", "color": "White" });
+            $("#AdminInbox").show();
+            $(".mailtable").show();
+            $(".msgDetails").hide();
+            $.ajax({
+                url: "@Url.Action("GetinboxDetail", "ProviderListing")",
+                //data:{model=@Model.ServiceRequestDetails.ToList()},
+                success: function (result) {
+                    $("#appointments").hide();
+                    result = '<tr><td colspan="4"><b>Inbox</b></td></tr>' + result;
+                    $(".Inbox").empty();
+                    $(".Inbox").html(result);
+                    $(".inboxcount").empty();
+                    $(".inboxcount").append($("#inboxcountfeild").val());
+                    $(".msgDetails").hide();
+                    $(".Inbox").show();
+
+
+                }
+            });
+        });
+
+
+        $(document).on("click", ".openmsg", function () {
+
+            var readmsg = parseInt($(this).children().next().first().children().find('span').attr('id'));
+            if (readmsg > 0) {
+                var RemainigUnread = parseInt($("#inboxcountfeild").val()) - readmsg;
+                $(".inboxcount").empty().append(RemainigUnread);
+            }
+            var MsgId = $(this).attr("data-detailId");
+            $.ajax({
+                url: "@Url.Action("GetMessageDetail","Consumer")",
+                data: { RequestId: MsgId },
+                success: function (result) {
+                    $("table").hide();
+                    $(".mailtable").hide();
+                    $(".msgDetails").html(result);
+                    $(".msgDetails").show();
+                }
+            });
+        });
+        $(document).on("click", ".openConversationMsg", function () {
+            
+            var readmsg = parseInt($(this).children().next().first().children().find('span').attr('id'));
+            if (readmsg > 0) {
+                var RemainigUnread = parseInt($("#inboxcountfeild").val()) - readmsg;
+                $(".inboxcount").empty().append(RemainigUnread);
+            }
+            var MsgId = $(this).attr("data-detailId");
+            $.ajax({
+                url: "@Url.Action("GetCustomMessageDetail","Consumer")",
+                data: { ConversationId: MsgId},
+                success: function (result) {
+                    $("table").hide();
+                    $(".mailtable").hide();
+                    $(".msgDetails").html(result);
+                    $(".msgDetails").show();
+                }
+            });
+        });
+
+        $(".sendmsg").click(function () {
+            var MsgId = $(this).attr("data-detailId");
+            var detailtype = $(this).attr("data-type");
+            
+            $.ajax({
+                url: "@Url.Action("SentMessageDetail","Consumer")",
+                data: { RequestId: MsgId, type: detailtype },
+                success: function (result) {
+
+                    $("table").hide();
+                    $(".msgDetails").html(result);
+                    $(".msgDetails").show();
+                }
+            });
+            //$(document).on("click", ".recievemsg", function () {
+
+
+        });
+        $(".recievemsg").click(function () {
+
+            var MsgId = $(this).attr("data-detailId");
+            $.ajax({
+                url: "@Url.Action("RecMessageDetail","Consumer")",
+                data: { RequestId: MsgId },
+                success: function (result) {
+
+                    $("table").hide();
+                    $(".msgDetails").html(result);
+                    $(".msgDetails").show();
+                }
+            });
+
+        });
+        $(".archivemsg").click(function () {
+            var MsgId = $(this).attr("data-detailId");
+            $.ajax({
+                url: "@Url.Action("ArchiMessageDetail","ProviderListing")",
+                data: { RequestId: MsgId },
+                success: function (result) {
+
+                    $("table").hide();
+                    $(".msgDetails").html(result);
+                    $(".msgDetails").show();
+                }
+            });
+            //$(document).on("click", ".recievemsg", function () {
+
+
+        });
+        $(document).on("click", ".cancelAppointment", function () {
+
+            var appid = $(this).attr("id");
+            $.ajax({
+                url: "@Url.Action("CancelAppointment", "Consumer")",
+                data: { AppointId: appid },
+                success: function (result) {
+                    $.ajax({
+                        url: "@Url.Action("GetAllProviderAppointments", "ProviderListing")",
+                        success: function (result) {
+                            $("table").hide();
+                            $("#AdminInbox").hide();
+                            $("#appointments").html(result);
+                            $("#appointments").show();
+                            $(".appointmentCount").empty();
+                            $(".appointmentCount").append($("#Appointmentcountfeild").val());
+                        }
+                    });
+                }
+            });
+        });
+        $(document).on("click", ".AcceptAppointment", function () {
+
+            var appid = $(this).attr("id");
+            $.ajax({
+                url: "@Url.Action("AcceptAppointment", "Consumer")",
+                data: { AppointId: appid, UserType: "Provider" },
+                success: function (result) {
+                    $.ajax({
+                        url: "@Url.Action("GetAllProviderAppointments", "ProviderListing")",
+                        success: function (result) {
+                            $("table").hide();
+                            $("#AdminInbox").hide();
+                            $("#appointments").html(result);
+                            $("#appointments").show();
+                            $(".appointmentCount").empty();
+                            $(".appointmentCount").append($("#Appointmentcountfeild").val());
+                        }
+                    });
+                }
+            });
+        });
+        $(document).on("click", ".RejectAppointment", function () {
+
+            var appid = $(this).attr("id");
+            $.ajax({
+                url: "@Url.Action("RejectAppointment", "Consumer")",
+                data: { AppointId: appid, UserType: "Provider" },
+                success: function (result) {
+                    $.ajax({
+                        url: "@Url.Action("GetAllProviderAppointments", "ProviderListing")",
+                        success: function (result) {
+                            $("table").hide();
+                            $("#AdminInbox").hide();
+                            $("#appointments").html(result);
+                            $("#appointments").show();
+                            $(".appointmentCount").empty();
+                            $(".appointmentCount").append($("#Appointmentcountfeild").val());
+                        }
+                    });
+                }
+            });
+        });
+        $(document).on("click", ".newappointment", function (e) {
+            e.preventDefault();
+            //if ($(this).data("appointmenttype") == "offer") {
+            //    $(".modal-title").replaceWith("Alter Offer Detail");
+            //    $("#sendnewAppointment").val("Send New Appointment");
+            //}
+            //else {
+            //    $(".modal-title").replaceWith("New Appointment Detail");
+            //    $("#sendnewAppointment").val("Send New Appointment");
+            //}
+            $("[name='formid']").val($(this).attr("id"));
+            $("#myModal").modal("show");
+
+        });
+
+        $("#sendnewAppointment").click(function () {
+            
+            var formid = $("[name='formid']").val();
+            $("#myModal").modal("hide");
+            $(".servicedate" + formid).val($(".newservicedateclass").val());
+            $(".besttime" + formid).val($(".newProviderservicebestimeclass").val());
+            $.ajax({
+                url: "@Url.Action("MakeAppointment", "ProviderListing")",
+                data: $("#" + formid).serialize(),
+                success: function (result) {
+                    alert("Your appointment send Successfully");
+                    $(".newservicedateclass").empty();
+                    $(".newProviderservicebestimeclass").val("");
+                    $.ajax({
+                        url: "@Url.Action("GetAllProviderAppointments", "ProviderListing")",
+                        success: function (result) {
+                            $("table").hide();
+                            $("#AdminInbox").hide();
+                            $("#appointments").html(result);
+                            $("#appointments").show();
+                            $(".appointmentCount").empty();
+                            $(".appointmentCount").append($("#Appointmentcountfeild").val());
+                        }
+                    });
+
+                }
+            });
+        });
+
+    })
+</script>

@@ -1,0 +1,261 @@
+﻿@using Microsoft.AspNet.Identity
+@using AgingInHome.Models
+@model AgingInHome.Models.ServiceRequestModel
+@{
+    ViewBag.Title = "UpdateServiceRequest";
+    var userid = User.Identity.GetUserId();
+    var currentcategoryDetails = Model.ServiceRequestCategories.First();
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(h => h.Id)
+    <div class="maincontainer">
+        @Html.Hidden("UserId", userid)
+        @Html.Hidden("IsDirectContact")
+        @Html.Hidden("ServiceId", Model.Id)
+        <h3>Client Service Request</h3>
+        <div class="listingDiv article">
+            <div style="padding:2%">
+                <div class="row" id="withloginForm">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                            @Html.Label("Needed Services *")
+                            <br />
+                        </div>
+                    </div>
+                    @foreach (var category in (List<ProviderCategoryModel>)ViewBag.categoryList)
+                    {
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12 col-xs-12">
+
+                                @{ currentcategoryDetails = Model.ServiceRequestCategories.FirstOrDefault(s => s.ProviderCategoryId == category.Id && s.IsActive != false);
+                                }
+                                @if (currentcategoryDetails != null)
+                                {
+                                    <div class="col-lg-3 col-sm-4 col-xs-12">
+                                        <input type="checkbox" name="SelectedCategory" value="@category.Id" checked="checked" /> &nbsp;@category.CategoryName
+                                    </div>
+                                    <span id="@category.Id">
+
+                                        <div class="col-lg-3 col-sm-4 col-xs-12">
+                                            <div class="col-lg-5 col-sm-6 col-xs-6 removepadding">
+                                                @Html.Label("Service Date", new { @class = "pull-right removemargin" })
+                                            </div>
+                                            <div class="col-lg-6 col-sm-6 col-xs-6 removepadding">
+                                                <input type="text" name="ServiceDate" value="@currentcategoryDetails.ServiceDate.Value.ToString("MM/dd/yyyy")" class="form-control serviceDate" style="height: 25px !important;" />
+                                                @*@Html.TextBox("ServiceDate", currentcategoryDetails.ServiceDate, new { @style = "height: 25px !important;", @class = "form-control" })*@
+                                            </div>
+
+                                        </div>
+                                        <div class="col-lg-4 col-sm-4 col-xs-12">
+                                            <div class="col-lg-3 col-sm-4 col-xs-6 removepadding">
+                                                @Html.Label("Best Time", new { @class = "pull-right removemargin" })
+                                            </div>
+                                            <div class="col-lg-4 col-sm-6 col-xs-6 removepadding">
+                                                <select class="form-control col-lg-6 col-sm-6 col-xs-6" name="BestTime" style="height: 30px !important">
+                                                    <option value="">Select best Time</option>
+                                                    <option value="Anytime" @(currentcategoryDetails.BestTime == "Anytime" ? "selected" : "")>Anytime</option>
+                                                    <option value="Afternoon" @(currentcategoryDetails.BestTime == "Afternoon" ? "selected" : "")>Afternoon </option>
+                                                    <option value="Morning" @(currentcategoryDetails.BestTime == "Morning" ? "selected" : "")>Morning</option>
+                                                    <option value="Evening" @(currentcategoryDetails.BestTime == "Evening" ? "selected" : "")>Evening</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </span>
+                                }
+                                else
+                                {
+                                    <div class="col-lg-3 col-sm-4 col-xs-12">
+                                        <input type="checkbox" name="SelectedCategory" value="@category.Id" /> &nbsp;@category.CategoryName
+                                    </div>
+                                    <span id="@category.Id"></span>
+                                }
+
+
+                            </div>
+
+                        </div>
+                        <hr />
+                                    }
+
+
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                        <button type="submit" class="btn btn-primary btn-lg pull-right" style="padding:23px;width:125px;text-align:left;padding-left:26px;border-radius: inherit; background:#1F3F88">
+                            <i class="fa fa-spinner fa-pulse fa-fw" hidden="hidden"></i>Update &nbsp;<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Dialogbox" title="What you want" style="display: none;">
+
+        @Html.RadioButton("IsDirectContacted", true) &nbsp; Do you want to see the search results <br />
+        @Html.RadioButton("IsDirectContacted", false) &nbsp; Do you want us to contact service provider on your behalf<br />
+
+    </div>
+                                    }
+@*<script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>*@
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<link href="~/Content/Custom/jquery-ui.min.css" rel="stylesheet" />
+
+<script>
+    $(function () {
+        $(".fa-spinner").hide();
+        var serviceCategories = [];
+        $("#serviceRequest").hide()
+        //$("[name='ServiceDate']").datetimepicker({
+        //    autoclose: true,
+        //    todayBtn: true,
+        //    viewMode: 'years',
+        //});
+        $(".serviceDate").datepicker({ minDate: new Date() });
+
+        $("[type='checkbox']").click(function () {
+
+            currentcheckbox = this;
+            if ($(this).is(":checked")) {
+                $.ajax({
+                    url: "@Url.Action("LoadServiceDateAndBestTime","Consumer")",
+                    success: function (partialview) {
+
+                        $("#" + $(currentcheckbox).val()).html(partialview);
+                    }
+                })
+            }
+            else {
+                $("#" + $(currentcheckbox).val()).empty();
+            }
+        });
+        $("[type='submit']").click(function (e) {
+            
+            var error = false;
+            $("[type='checkbox']:checked").each(function (index, obj) {
+
+                var catid = $(obj).val();
+                var serviceId = $("#ServiceId").val();
+                var selectedCatDetail = {}
+                selectedCatDetail.catId = catid;
+                selectedCatDetail.CatBestTime = $("#" + catid).find("[name='BestTime']").val();
+                selectedCatDetail.CatserviceDate = $("#" + catid).find(".serviceDate").val();
+                selectedCatDetail.ServiceRequestId = serviceId;
+                serviceCategories.push(selectedCatDetail);
+            });
+            //if ($("#UserId").val() == "") {
+            //    alert("Please login before send the service request");
+            //    return false;
+            //}
+            //if ($("[type='text']").val() != "" && $('select').val() != "") {
+            e.preventDefault();
+            $(".serviceDate").each(function (index, element) {
+               // alert($(element).val());
+                if ($(element).val() == "") {
+                    $(this).css('border-color', "red")
+                    
+                    error = true;
+
+                }
+            });
+            if (error == false) {
+                if ($('[type="checkbox"]:checked').length > 0) {
+
+                    $(".fa-spinner").show();
+                    $.ajax({
+                        url: '@Url.Action("UpdateServiceRequestDetails", "Consumer")',
+                        data: { ServiceRequest: serviceCategories },
+                        type: "POST",
+                        success: function (result) {
+                            window.location.href = "/Consumer/Dashboard";
+                            //if (result != "Dashboard") {
+                            //    window.location.href = result;
+                            //}
+                            //else {
+                            //    window.location.href = "/Consumer/Dashboard";
+                            //}
+
+                        }
+                    });
+                    @*$("#Dialogbox").dialog(
+                  {
+                      width: 600,
+                      height: 180,
+                      resizable: false,
+                      draggable: false,
+                      modal: true,
+                      buttons: [
+                                  {
+                                      text: "Send Request",
+                                      "class": 'btn btn-success',
+                                      click: function () {
+
+                                          $("#IsDirectContact").val($("[name='IsDirectContacted']:checked").val());
+                                          $(".fa-spinner").css("display", "inline");
+
+                                          $.ajax({
+                                              url: '@Url.Action("AddServiceRequest","Consumer")',
+                                              data: $("form").serialize(),
+                                              type: "POST",
+                                              success: function (result) {
+                                                  $("#Dialogbox").dialog("close");
+
+                                                  if (result != "Dashboard") {
+                                                      window.location.href = result;
+                                                  }
+                                                  else {
+                                                      window.location.href = "/Consumer/SuccessServiceRequest";
+                                                  }
+
+                                              }
+                                          });
+                                      }
+
+                                      // Uncommenting the following line would hide the text,
+                                      // resulting in the label being used as a tooltip
+                                      //showText: false
+                                  }
+                      ]
+
+
+                  });*@
+                    $(".ui-dialog-buttonpane").append('<i class="fa fa-spinner fa-spin fa-3x" aria-hidden="true" style="position:absolute;z-index:999;display:none"></i>');
+                    var dialogposition = $("#Dialogbox").position();
+                    $(".fa-spinner").css({ top: 119.7656, left: dialogposition.left });
+                }
+                else {
+                    alert("Please select atleast One Service");
+                }
+
+            }
+
+            //}
+
+
+        });
+
+
+    });
+
+</script>
+<style>
+    .ui-widget-header {
+        background: #1F3F88;
+        color: white;
+    }
+
+    .removepadding {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
+    .removemargin {
+        margin: 4px 4px 0 0;
+    }
+</style>

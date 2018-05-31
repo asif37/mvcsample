@@ -1,0 +1,420 @@
+﻿@using Microsoft.AspNet.Identity
+@using AgingInHome.Models
+@model AgingInHome.Models.RegisterViewModel
+@{
+    ViewBag.Title = "ServiceRequest";
+    var userid = User.Identity.GetUserId();
+}
+@using (Html.BeginForm())
+{
+
+    <div class="maincontainer">
+        @Html.Hidden("UserId", userid)
+        @Html.Hidden("IsDirectContact")
+        <h3>Client Service Request</h3>
+        <div class="listingDiv article">
+            <div style="padding: 10px 36px;">
+
+                @using (Html.BeginForm())
+                {
+                    <div id="withoutLoginForm">
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    @Html.Label("First Name")
+                                    <div>
+                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    @Html.Label("Last Name")
+                                    <div>
+                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Email, htmlAttributes: new { })
+                                    <div>
+                                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Password, htmlAttributes: new { })
+                                    <div>
+                                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { })
+                                    <div>
+                                        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Gender, htmlAttributes: new { })
+                                    <div>
+                                        <select name="Gender" class="form-control">
+                                            <option>Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                        @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                <div class="col-lg-6 col-sm-6 col-xs-6" style="padding-left: 0px;">
+                                    @Html.LabelFor(model => model.Age, htmlAttributes: new { })
+                                    @Html.EditorFor(model => model.Age, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Age, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-lg-6 col-sm-6 col-xs-6" style="padding-left: 0px;padding-right: 0px;">
+                                    @Html.LabelFor(model => model.Relation, htmlAttributes: new { })
+                                    <select name="relation" class="form-control">
+                                        <option value="">Select relation</option>
+                                        <option value="Spouse/Partner">Spouse/Partner</option>
+                                        <option value="Parent">Parent</option>
+                                        <option value="Other Relative">Other Relative</option>
+                                        <option value="Friend">Friend</option>
+                                        <option value="Client">Client</option>
+                                        <option value="Myself">Myself</option>
+                                    </select>
+                                    @*@Html.DropDownList("Relation", (SelectList)ViewBag.State, new { @class = "form-control" })*@
+                                    @Html.ValidationMessageFor(model => model.Relation, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                <div class="col-lg-6 col-sm-6 col-xs-6" style="padding-left: 0px;">
+                                    @Html.Label("Primary Phone")
+                                    @Html.EditorFor(model => model.PrimaryPhone, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.PrimaryPhone, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-lg-6 col-sm-6 col-xs-6" style="padding-left: 0px;padding-right: 0px;">
+                                    @Html.Label("Alter Phone")
+                                    @Html.EditorFor(model => model.AlterPhone, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.AlterPhone, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+
+                                <div class="form-group">
+                                    @Html.Label("Type Of Medical Insurance")
+                                    <div>
+                                        @Html.EditorFor(model => model.TypeOfMedicalInsurance, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.TypeOfMedicalInsurance, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-xs-12">
+                                <div class="col-lg-6 col-sm-6 col-xs-6" style="padding-left: 0px;">
+                                    @Html.LabelFor(model => model.ZipCode, htmlAttributes: new { })
+                                    @Html.EditorFor(model => model.ZipCode, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-lg-6 col-sm-6 col-xs-6" style="padding-left: 0px;padding-right: 0px;">
+                                    @Html.LabelFor(model => model.StateId, htmlAttributes: new { })
+                                    @Html.DropDownList("StateId", (SelectList)ViewBag.StateList, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.StateId, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br />
+
+                        <div class="row" id="withloginForm">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6 col-xs-12">
+                                    @Html.Label("Needed Services *")
+                                    <br />
+                                </div>
+                            </div>
+                            @foreach (var category in (List<ProviderCategoryModel>)ViewBag.categoryList)
+                            {
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                                        <div class="col-lg-3 col-sm-4 col-xs-12">
+                                            <input type="checkbox" name="SelectedCategory" value="@category.Id" /> &nbsp;@category.CategoryName
+                                        </div>
+                                        <span id="@category.Id"></span>
+
+                                    </div>
+                                </div>
+                                <hr />
+                            }
+
+
+                        </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12 col-xs-12">
+
+                                    <button type="submit" class="btn btn-primary btn-lg pull-right" style="padding:23px;width:125px;text-align:left;padding-left:26px;border-radius: inherit; background:#1F3F88">
+                                        <i class="fa fa-spinner fa-pulse fa-fw" hidden="hidden"></i>Next &nbsp;<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+
+
+                            </div>
+
+                }
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+    <div id="Dialogbox" title="What you want" style="display: none;">
+
+        @Html.RadioButton("IsDirectContacted", true) &nbsp; Do you want to see the search results <br />
+        @Html.RadioButton("IsDirectContacted", false) &nbsp; Do you want us to contact service provider on your behalf<br />
+
+    </div>
+        <div id="confirm" hidden="hidden">
+            <p>Have you accout with Us?</p>
+        </div>
+}
+@*<script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>*@
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<link href="~/Content/Custom/jquery-ui.min.css" rel="stylesheet" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.19/jquery.form-validator.min.js"></script>
+<script>
+    $(function () {
+        $("[name='PrimaryPhone']", "[name='AlterPhone']").mask("(000) 000-0000");
+        var serviceCategories = [];
+        $(".fa-spinner").hide();
+        var currentcheckbox;
+        //$("#serviceRequest").hide()
+        $("#withoutLoginForm").hide();
+        $("#withloginForm").hide();
+        $("[type='submit']").click(function () {
+
+        });
+
+
+        $("[type='checkbox']").click(function () {
+            
+            currentcheckbox = this;
+            if ($(this).is(":checked")) {
+                $.ajax({
+                    url: "@Url.Action("LoadServiceDateAndBestTime","Consumer")",
+                    success: function (partialview) {
+                        
+                        $("#" + $(currentcheckbox).val()).html(partialview);
+                    }
+                })
+            }
+            else {
+                $("#" + $(currentcheckbox).val()).empty();
+            }
+        });
+        if ($("#UserId").val() == "") {
+
+            $("#confirm").dialog({
+                closeOnEscape: false,
+                open: function(event, ui) {
+                    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                },
+                title: "Confirmation",
+                draggable: false,
+                modal: true,
+                buttons: {
+                    "Yes": function () {
+                        window.location.href = "@Url.Action("Login","Account")";
+                    },
+                    "No": function () {
+                        $("#withoutLoginForm").show();
+                        $("#withloginForm").show();
+                        $("#confirm").dialog('close');
+                    }
+                }
+            });
+
+        }
+        else {
+            $("#withloginForm").show();
+
+        }
+
+        $("[type='checkbox']").click(function (e) {
+
+            $(this).after().html('<input type="text" name="name" value="" class="form-control" />');
+        });
+
+        $("[type='submit']").click(function (e) {
+            
+            $("[type='checkbox']:checked").each(function (index, obj) {
+                
+                var catid = $(obj).val();
+                var selectedCatDetail = {}
+                selectedCatDetail.catId = catid;
+                selectedCatDetail.CatBestTime = $("#" + catid).find("[name='BestTime']").val();
+                selectedCatDetail.CatserviceDate = $("#" + catid).find(".serviceDate").val();
+                serviceCategories.push(selectedCatDetail);
+            });
+            ;
+            if ($("[type='text']").val() != "" && $('select').val() != "") {
+                e.preventDefault();
+                $(".fa-spinner").show();
+                $.ajax({
+                    url: "@Url.Action("ConsumerRegister", "Account")",
+                    type: 'POST',
+                    data: $("form").serialize(),
+                    //contentType: 'application/json; charset=utf-8',
+                    success: function (Status) {
+                        alert('Consumer Account created. Now creating service request.');
+                        $.ajax({
+                            url: "@Url.Action("ServiceRequestDetails", "Consumer")",
+                            type: 'POST',
+                            data: { ServiceRequest: serviceCategories },
+                            //contentType: 'application/json; charset=utf-8',
+                            success: function (Status) {
+                                
+                                alert("Successfully Submitted");
+                                window.location.href = "@Url.Action("Dashboard","Consumer")";
+
+                                //your success code
+                            },
+
+                        });
+
+
+                        //your success code
+                    },
+                    error: function () {
+                        alert("Successfully Submitted");
+                        window.location.href = "@Url.Action("Dashboard","Consumer")";
+                    }
+                });
+            }
+            else {
+                if ($("#UserId").val() != "") {
+                    e.preventDefault();
+                    if ($("[type='checkbox']:checked").length > 0) {
+                        $(".fa-spinner").show();
+
+                        $.ajax({
+                            url: "@Url.Action("ServiceRequestDetails", "Consumer")",
+                            type: 'POST',
+                            data: { ServiceRequest: serviceCategories },
+                            //contentType: 'application/json; charset=utf-8',
+                            success: function (Status) {
+                                
+                                alert("Successfully Submitted");
+                                window.location.href = "@Url.Action("Dashboard","Consumer")";
+
+                                //your success code
+                            },
+
+                        });
+
+                    }
+                    else {
+                        alert("please select atleast one category");
+                    }
+                }
+            }
+            //if ($("#UserId").val() == "") {
+            //    alert("Please login before send the service request");
+            //    return false;
+            //}
+            @*if ($("[type='text']").val() != "" && $('select').val() != "") {
+                        e.preventDefault();
+                        if ($('[type="checkbox"]:checked').length > 0) {
+
+                            $("#Dialogbox").dialog(
+                               {
+                                   width: 600,
+                                   height: 180,
+                                   resizable: false,
+                                   draggable: false,
+                                   modal: true,
+                                   buttons: [
+                                               {
+                                                   text: "Send Request",
+                                                   "class": 'btn btn-success',
+                                                   click: function () {
+
+                                                       $("#IsDirectContact").val($("[name='IsDirectContacted']:checked").val());
+                                                       $(".fa-spinner").css("display", "inline");
+
+                                                       $.ajax({
+                                                           url: '@Url.Action("AddServiceRequest","Consumer")',
+                                                           data: $("form").serialize(),
+                                                           type: "POST",
+                                                           success: function (result) {
+                                                               $("#Dialogbox").dialog("close");
+
+                                                               if (result != "Dashboard") {
+                                                                   window.location.href = result;
+                                                               }
+                                                               else {
+                                                                   window.location.href = "/Consumer/SuccessServiceRequest";
+                                                               }
+                                                           }
+                                                       });
+                                                   }
+
+                                                   // Uncommenting the following line would hide the text,
+                                                   // resulting in the label being used as a tooltip
+                                                   //showText: false
+                                               }
+                                   ]
+
+
+                               });
+                            $(".ui-dialog-buttonpane").append('<i class="fa fa-spinner fa-spin fa-3x" aria-hidden="true" style="position:absolute;z-index:999;display:none"></i>');
+                            var dialogposition = $("#Dialogbox").position();
+                            $(".fa-spinner").css({ top: 119.7656, left: dialogposition.left });
+                        }
+                        else {
+                            alert("Please select atleast One Service");
+                        }
+                    }*@
+
+
+        });
+
+
+    });
+
+</script>
+<style>
+    .ui-widget-header {
+        background: #1F3F88;
+        color: white;
+    }
+</style>

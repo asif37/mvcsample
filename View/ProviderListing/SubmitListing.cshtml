@@ -1,0 +1,932 @@
+﻿@model AgingInHome.Models.ProviderListingModel
+@using AgingInHome.DAL
+@{
+    ViewBag.Title = "Provider Listing";
+    var actionname = "";
+    var i = 0;
+    var currentdetail = new ServiceDetail();
+}
+@if (Model.ProviderListingId == 0)
+{
+    actionname = "PreviewProviderListing";
+}
+else
+{
+    actionname = "SubmitListing";
+}
+@using (@Html.BeginForm(actionname, "ProviderListing", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    @Html.HiddenFor(m => m.ProviderListingId)
+    @Html.HiddenFor(m => m.Bitimagestring)
+    <div class="maincontainer">
+        <h3 style="color:black;font-size: xx-large;font-weight: 600;">Submit Listing</h3>
+        <div class="listingDiv">
+            <div class="row" style="padding: 24px;">
+
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading"><strong style="color:black;font-size: xx-large;">Company</strong></div>
+                        <div class="panel-body">
+
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Company Name",new { @class="pull-right"})
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.CompanyName)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Address", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextBoxFor(m => m.ProviderAddress, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ProviderAddress)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Phone Number", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextBoxFor(m => m.ProviderContactNumber, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ProviderContactNumber)
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("City", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+
+                                    @Html.ValidationMessageFor(m => m.City, "", new { @style = "display: block;" })
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("State", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.DropDownList("StateId", (SelectList)ViewBag.State, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.StateId)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Zip code", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextBoxFor(m => m.Zipcode, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Zipcode)
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <br />
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong style="color:black;font-size: xx-large;">Services</strong>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("What Best Describes You?", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.DropDownList("CategoryId", (SelectList)ViewBag.Categorylist, "Select what Best Describes You?", new { @class = "form-control" })
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-6 col-lg-offset-2 col-sm-12 col-xs-12 catgoryserviceDiv">
+                                @if (Model.ProviderListingId != 0)
+                                {
+                                    foreach (var item in ViewBag.CategoryServicelist)
+                                    {
+                                        <span>
+
+                                            @{
+                                                if (Model.ServiceDetails != null)
+                                                {
+                                                    currentdetail = Model.ServiceDetails.FirstOrDefault(s => s.CategoryServiceId == item.CategoryServiceId);
+
+                                                }
+
+                                            }
+
+                                        </span>
+                                        <div class="row">
+                                            <div class="col-lg-5 col-sm-4 col-xs-12">
+                                                <div class="form-group" style="margin-top:17px">
+                                                    <input type="checkbox" name="ServiceDetails[@i].IsSelected" value="true" @(currentdetail.IsSelected == null ? "" : "checked") />@item.Name
+                                                    <input type="hidden" name="ServiceDetails[@i].CategoryServiceId" value="@item.CategoryServiceId" />
+                                                    <input type="hidden" name="ServiceDetails[@i].Id" value="@currentdetail.Id" />
+                                                </div>
+                                            </div>
+                                            <div class="">
+                                                <div class="col-lg-4 col-sm-4 col-xs-12">
+                                                    <select class="form-control" style="margin-top:25px" name="ServiceDetails[@i].ServiceType">
+                                                        <option @(currentdetail.ServiceType == "Select Service type" ? "selected" : "")>Select Service type</option>
+                                                        <option value="hour" @(currentdetail.ServiceType == "hour" ? "selected" : "")>Hour</option>
+                                                        <option value="visit" @(currentdetail.ServiceType == "visit" ? "selected" : "")>Visit</option>
+                                                        <option value="Service" @(currentdetail.ServiceType == "Service" ? "selected" : "")>Service</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-4 col-xs-12">
+                                                    @Html.Label("Service Price")
+                                                    @Html.TextBox("ServiceDetails[" + @i + "].ServicePrice", currentdetail.ServicePrice, new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                                        i = i + 1;
+                                                    }
+
+
+                                                }
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12 col-xs-12 customdiv">
+                                    @if (Model.ServiceDetails != null)
+                                    {
+                                        foreach (var custom in Model.ServiceDetails.Where(s => s.CategoryServiceId == null).ToList())
+                                        {
+                                    <div class="row">
+                                        <div class="col-lg-5 col-sm-4 col-xs-12">
+                                            <div class="form-group">
+                                                @Html.Label("Service Name")
+                                                <input type="text" name="ServiceDetails[@i].CustomeService" value="@custom.CustomeService" class="form-control" />
+                                                <input type="hidden" name="ServiceDetails[@i].Id" value="@custom.Id" />
+                                            </div>
+                                        </div>
+                                        <div class="">
+                                            <div class="col-lg-4 col-sm-4 col-xs-12">
+                                                <select class="form-control" style="margin-top:25px" name="ServiceDetails[@i].ServiceType">
+                                                    <option>Select Service type</option>
+                                                    <option value="hour" @(custom.ServiceType == "hour" ? "selected" : "")>Hour</option>
+                                                    <option value="visit" @(custom.ServiceType == "visit" ? "selected" : "")>Visit</option>
+                                                    <option value="Service" @(custom.ServiceType == "Service" ? "selected" : "")>Service</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-4 col-xs-12">
+                                                @Html.Label("Service Price")
+                                                @Html.TextBox("ServiceDetails[" + @i + "].ServicePrice", @custom.ServicePrice, new { @class = "form-control" })
+                                                <span class="customeremove badge pull-right" style="color:white;cursor:pointer;margin: -27px -23px 0 123px;">x</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        }
+                                    }
+
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-offset-2 col-lg-6">
+                                    <span class="customService">Add custom Service</span>
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6 hidden">
+                                <div class="form-group">
+                                    @Html.Label("Services", new { })<br />
+                                    @Html.RadioButtonFor(m => m.ServicePriceType, "hour", new { @checked = "checked" })&nbsp; hour
+                                    @Html.RadioButtonFor(m => m.ServicePriceType, "Visit")&nbsp; Visit
+                                    @Html.RadioButtonFor(m => m.ServicePriceType, "Service")&nbsp; Service
+                                    @Html.ValidationMessageFor(f => f.ServicePriceType)
+                                </div>
+                            </div>
+                            <div class="col-md-6 hidden">
+                                <div class="form-group">
+                                    @Html.Label("Services Price")
+                                    @Html.TextBoxFor(m => m.ServicePrice, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ServicePrice)
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Year of experience?", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.DropDownListFor(m => m.Experience, new SelectList(Model.YearOfExperience, "Key", "Value"), "Select Experience", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Experience)
+                                </div>
+                            </div>
+
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <strong style="color:black;font-size: xx-large;">Services Areas</strong>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="serviceAreaDiv">
+                                        <div class="row" style="margin:0px">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    @Html.Label("City")
+                                                    @Html.TextBoxFor(m => m.ServiceAreas[0].City, new { @class = "form-control" })
+
+                                                    @Html.ValidationMessageFor(m => m.ServiceAreas[0].City, "", new { @style = "display: block;" })
+
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    @Html.Label("State")
+                                                    @Html.DropDownList("ServiceAreas[0].StateId", (SelectList)ViewBag.State, new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(m => m.ServiceAreas[0].StateId)
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    @Html.Label("Zipcode")
+                                                    @Html.TextBoxFor(m => m.ServiceAreas[0].ZipCode, new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(m => m.ServiceAreas[0].ZipCode)
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    @Html.Label("Service Radius")
+                                                    @if (Model.ProviderListingId == 0)
+                                                    {
+                                                        @Html.DropDownListFor(m => m.ServiceAreas[0].ServiceRadius, new SelectList(Model.ServiceRadius, "Key", "Value"), "Select Radius", new { @class = "form-control" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.DropDownListFor(m => m.ServiceAreas[0].ServiceRadius, new SelectList(Model.ServiceRadius, "Key", "Value", @Model.ServiceAreas[0].ServiceRadius), "Select Radius", new { @class = "form-control" })
+
+                                                    }
+                                                    @Html.ValidationMessageFor(m => m.ServiceAreas[0].ServiceRadius, "", new { @style = "display: block;" })
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.ActionLink("Add another", "", "", new { @style = "margin-top: -12px;position: absolute; ", @id = "AddOther" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong class="SectionHeading ">Logo/Photo</strong>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group row">
+                                <div class="col-lg-3 col-lg-offset-2">
+                                    @Html.Label("Company Logo/Your Photo", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-5">
+                                    @if (Model.ProviderListingId == 0)
+                                    {
+                                        <input type="file" id="file" data-val="true" data-val-required="please select a file" name="LogoUrl" style="font-weight: bold" />
+                                        @Html.ValidationMessageFor(m => m.LogoUrl)
+                                    }
+                                    else
+                                    {
+                                        <input type="file" id="file" name="imageUrl" style="font-weight: bold" value="" />
+                                    }
+                                    please upload image 200 x 150. And should be png/jpg format
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong style="color:black;font-size: xx-large;">Hours</strong>
+                        </div>
+                        <div class="panel-body">
+
+
+                            <div class="" style="height: auto">
+                                <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                                <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                                @Html.Label("Hours of Opetations")
+                                <div class="table table-bordered table-hover" style="padding:5px">
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-2 col-xs-12"></div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-6" style="text-align:center">@Html.Label("Open")</div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-6" style="text-align:center">@Html.Label("Close")</div>
+                                    </div >
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-2 col-xs-12">@Html.Label("Monday")</div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.MonStart, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.hourOfOperation.MonStart)
+                                        </div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.MonEnd, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.hourOfOperation.MonEnd)
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-2 col-xs-12">@Html.Label("Tuesday")</div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.TueStart, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+
+                                        </div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.TueEnd, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-2 col-xs-12">@Html.Label("Wednesday")</div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.WedStart, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+
+                                        </div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.WedEnd, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-2 col-xs-12">@Html.Label("Thrsday")</div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.ThuStart, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.ThuEnd, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-2 col-xs-12">@Html.Label("Friday")</div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.FriStart, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.FriEnd, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-2 col-xs-12">@Html.Label("Saturday")</div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.SatStart, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.SatEnd, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-lg-2 col-sm-2 col-xs-12 bold">@Html.Label("Sunday")</div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.SunStart, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-lg-5 col-sm-5 col-xs-12">
+                                            @Html.DropDownListFor(m => m.hourOfOperation.SunEnd, new SelectList(Model.OperationHours, "Key", "Value"), "Select Hours", new { @class = "form-control" })
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong style = "color:black;font-size: xx-large;" > Account </strong >
+                        </div >
+                        <div class="panel-body">
+
+                            @if(Model.ProviderListingId == 0)
+                                        {
+
+                                <div class="form-group row">
+                                    <div class="col-lg-2 col-lg-offset-2">
+                                        @Html.Label("Primary Email", new { @class = "pull-right" })
+                                    </div>
+                                    <div class="col-lg-4">
+                                        @Html.TextBoxFor(m => m.PrimaryEmail, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.PrimaryEmail)
+                                    </div>
+                                </div>
+
+                            }
+                            else
+                            {
+                                @*<div class="form-group">
+                                        @Html.Label("Primary Email")
+                                        @Html.TextBoxFor(m => m.PrimaryEmail, new { @class = "form-control", @readonly = "readonly" })
+                                        @Html.ValidationMessageFor(m => m.PrimaryEmail)
+                                    </div>*@
+
+                            }
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Password", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Password)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Verify Password", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                                    @Html.Label("Communiction Email (optional)")
+                                    @Html.TextBoxFor(m => m.CommunicationEmail, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ServiceAreas[0].StateId)
+                                    This will be used to send email services and appointment related email
+                                </div>*@
+
+                        </div>
+
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong style="color:black;font-size: xx-large;">Channels</strong>
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Website Link", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextBoxFor(m => m.WebsiteURL, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Google+ Link", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextBoxFor(m => m.GoogleURL, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Twitter link", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextBoxFor(m => m.TwitterURL, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Facebook link", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextBoxFor(m => m.FacebookURL, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <strong style="color:black;font-size: xx-large;"> About Us</strong>
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Who We Are", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextAreaFor(m => m.WhoWeAre, 4, 8, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.WhoWeAre)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Why Choose Us", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextAreaFor(m => m.WhyWeDo, 4, 8, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.WhyWeDo)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-lg-offset-2">
+                                    @Html.Label("Our Mission", new { @class = "pull-right" })
+                                </div>
+                                <div class="col-lg-4">
+                                    @Html.TextAreaFor(m => m.WhatWeDo, 4, 8, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.WhatWeDo)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                            @Html.Label("When we provide Services")
+                            @Html.TextAreaFor(m => m.WhenWeDo, 4, 8, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.WhenWeDo)
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Service Description")
+                            @Html.TextAreaFor(m => m.ServiceDescription, 4, 8, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.ServiceDescription)
+                        </div>*@
+                    <div class="form-group">
+                        @*<input type="submit" name="name" value="Next" class="btn btn-primary btn-lg " style="padding: 23px;width:125px;text-align:left;padding-left:26px" />
+                            <br /><i class="fa fa-long-arrow-right fa-2x arrowbtn" aria-hidden="true"></i>*@
+                        <div class="col-lg-offset-4 col-lg-4">
+                            <button type="submit" class="btn btn-primary btn-lg " style="padding: 23px;width:100%;text-align:center;padding-left:26px;background:#1F3F88;border-radius: inherit;">
+                                Next
+                                <i class="fa fa-long-arrow-right  " aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+                                                }
+<div class="modal fade" style="display: none;" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-example-header" style="padding:3% 3%;background: #053569;color: white;">
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>*@
+                <h4 class="modal-title" id="myModalLabel">Crop Image</h4>
+            </div>
+            <div class="modal-body">
+                <center>
+                    <div class="imageBox">
+                        <div class="thumbBox"></div>
+                        <div class="spinner" style="display: none">Loading...</div>
+                    </div>
+                </center>
+
+            </div>
+            <div class="modal-footer">
+                @*<input type="button" class="close" style="float:inherit" id="btnCrop" value="Crop">*@
+                @*<input type="button" id="btnZoomIn" value="+">
+                    <input type="button" id="btnZoomOut" value="-">*@
+                <button type="button" id="btnCrop" class="btn btn-success">Crop</button>
+                <button type="button" id="btnZoomIn" class="btn btn-primary"><i class="fa fa-plus"></i></button>
+                <button type="button" id="btnZoomOut" class="btn btn-primary"><i class="fa fa-minus"></i></button>
+
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="cropped">
+
+    </div>
+    <div class="imageBox">
+        <div class="thumbBox"></div>
+        <div class="spinner" style="display: none">Loading...</div>
+    </div>
+    <div class="action">
+        <input type="file" id="file" style="float:left; width: 250px">
+        <input type="button" id="btnCrop" value="Crop" style="float: right">
+        <input type="button" id="btnZoomIn" value="+" style="float: right">
+        <input type="button" id="btnZoomOut" value="-" style="float: right">
+    </div>*@
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script type="text/javascript">
+
+    $(function () {
+        var size;
+        if (parseInt($("[name='Zipcode']").val()) == 0) {
+            $("[name='Zipcode']").val("");
+        }
+
+        $("#ProviderContactNumber").mask("(000) 000-0000");
+        var countlist = 0;
+        $(".fa-plus-square-o").hide();
+        // $("table").hide();
+        $(".fa-plus-square-o").click(function () {
+            $(".fa-minus-square-o").show();
+            $(".table").show();
+            $(this).hide();
+        });
+        $(".fa-minus-square-o").click(function () {
+            $(".fa-plus-square-o").show();
+            $(".table").hide();
+            $(this).hide();
+        });
+
+        $(".customService").click(function (e) {
+            countlist = $(".catgoryserviceDiv").children("div").length;
+            countlist = countlist + $(".customdiv").children("div").length;
+
+            e.preventDefault();
+            $.ajax({
+                url: "@Url.Action("LoadCustomService")",
+                data: { count: countlist },
+                success: function (partialView) {
+                    $(".customService").before(partialView);
+                }
+            })
+        });
+        $(document).on("click", ".customeremove", function () {
+            debugger
+            $(this).parent().parent().parent().remove();
+        });
+        
+        
+        $("#AddOther").click(function (e) {
+            countlist = countlist + 1;
+
+            e.preventDefault();
+            $.ajax({
+                url: "@Url.Action("ServiceAreaPartial")",
+                data: { count: countlist },
+                success: function (partialView) {
+
+                    $("#serviceAreaDiv").append(partialView);
+                }
+            })
+        });
+        $(document).on("click", ".customeOther", function () {
+            debugger
+            $(this).parent().parent().parent().remove();
+        });
+        $("#file").change(function () {
+            var reader = new FileReader();
+            reader.onload = function () {
+            }
+            size = parseFloat($(this)[0].files[0].size / 1024).toFixed(2);
+
+        });
+
+
+
+        ///*****User for Image croping*****///
+
+        YUI().use('node', 'crop-box', function (Y) {
+            var options =
+            {
+                imageBox: '.imageBox',
+                thumbBox: '.thumbBox',
+                spinner: '.spinner',
+                imgSrc: ''
+            }
+            var cropper;
+            Y.one('#file').on('change', function () {
+
+                var reader = new FileReader();
+
+                if (size < 4000) {
+
+                    reader.onload = function (e) {
+                        debugger
+
+                        options.imgSrc = e.target.result;
+                        cropper = new Y.CropBox(options);
+
+                    }
+                    reader.readAsDataURL(this.get('files')._nodes[0]);
+                    this.get('files')._nodes = [];
+                    $("#myModal").modal({ backdrop: false, keyboard: false });
+
+                    $("#myModal").modal('show');
+                }
+                else {
+                    alert("your current image size is " + size + " KB.your image should be less than 4000 KB")
+                }
+            })
+            Y.one('#btnCrop').on('click', function () {
+                debugger
+                var img = cropper.getAvatar();
+                $("#Bitimagestring").val(img);
+                $("#myModal").modal('hide');
+
+                //Y.one('.cropped').append('<img src="' + img + '">');
+            })
+            Y.one('#btnZoomIn').on('click', function () {
+                cropper.zoomIn();
+            })
+            Y.one('#btnZoomOut').on('click', function () {
+                cropper.zoomOut();
+            })
+        })
+
+        $("[name='CategoryId']").change(function () {
+            var catid = $(this).val();
+
+            $.ajax({
+                url: "@Url.Action("LoadCategoryService")",
+                data: { categoryId: catid },
+                success: function (partialview) {
+                    $(".catgoryserviceDiv").empty();
+                    $(".catgoryserviceDiv").append(partialview);
+
+                }
+            })
+            //
+        });
+        ///*****End image croping******///
+        YUI.add('crop-box', function (Y) {
+            Y.CropBox = Y.Base.create('crop-box', Y.Base, [],
+                {
+                    initializer: function (options) {
+                        this.options = options;
+                        this.state = {};
+                        this.render();
+                    },
+                    render: function () {
+                        var self = this;
+                        this.imageBox = Y.one(this.options.imageBox);
+                        this.thumbBox = this.imageBox.one(this.options.thumbBox);
+                        this.spinner = this.imageBox.one(this.options.spinner);
+
+                        this.initObject();
+                        return this;
+                    },
+                    initObject: function () {
+                        var self = this;
+                        this.spinner.show();
+
+                        this.image = new Image();
+                        this.image.onload = function () {
+                            self.spinner.hide();
+                            self.setBackground();
+
+                            //event handler
+                            self.imageBox.on('mousedown', self.imgMouseDown, self);
+                            self.imageBox.on('mousemove', self.imgMouseMove, self);
+                            self.mouseup = Y.one('body').on('mouseup', self.imgMouseUp, self);
+
+                            Y.UA.gecko > 0 ?
+                                self.imageBox.on('DOMMouseScroll', self.zoomImage, self) :
+                                self.imageBox.on('mousewheel', self.zoomImage, self);
+                        };
+                        this.image.src = this.options.imgSrc;
+                    },
+                    setBackground: function () {
+                        if (!this.ratio) this.ratio = 1;
+
+                        var w = parseInt(this.image.width) * this.ratio;
+                        var h = parseInt(this.image.height) * this.ratio;
+
+                        var pw = (this.imageBox.get('clientWidth') - w) / 2;
+                        var ph = (this.imageBox.get('clientHeight') - h) / 2;
+
+                        this.imageBox.setAttribute('style',
+                            'background-image: url(' + this.image.src + '); ' +
+                            'background-size: ' + w + 'px ' + h + 'px; ' +
+                            'background-position: ' + pw + 'px ' + ph + 'px; ' +
+                            'background-repeat: no-repeat');
+                    },
+                    imgMouseDown: function (e) {
+                        e.stopImmediatePropagation();
+                        this.state.dragable = true;
+                        this.state.mouseX = e.clientX;
+                        this.state.mouseY = e.clientY;
+                    },
+                    imgMouseMove: function (e) {
+                        e.stopImmediatePropagation();
+                        if (this.state.dragable) {
+                            var x = e.clientX - this.state.mouseX;
+                            var y = e.clientY - this.state.mouseY;
+
+                            var bg = this.imageBox.getStyle('backgroundPosition').split(' ');
+
+                            var bgX = x + parseInt(bg[0]);
+                            var bgY = y + parseInt(bg[1]);
+
+                            this.imageBox.setStyle('backgroundPosition', bgX + 'px ' + bgY + 'px');
+
+                            this.state.mouseX = e.clientX;
+                            this.state.mouseY = e.clientY;
+                        }
+                    },
+                    imgMouseUp: function (e) {
+                        e.stopImmediatePropagation();
+                        this.state.dragable = false;
+                    },
+                    zoomImage: function (e) {
+                        e.wheelDelta > 0 ? this.ratio *= 1.1 : this.ratio *= 0.9;
+                        this.setBackground();
+                    },
+                    getAvatar: function () {
+                        var self = this,
+                            width = this.thumbBox.get('clientWidth'),
+                            height = this.thumbBox.get('clientHeight'),
+                            canvas = document.createElement("canvas"),
+                            dim = this.imageBox.getStyle('backgroundPosition').split(' '),
+                            size = this.imageBox.getStyle('backgroundSize').split(' '),
+                            dx = parseInt(dim[0]) - this.imageBox.get('clientWidth') / 2 + width / 2,
+                            dy = parseInt(dim[1]) - this.imageBox.get('clientHeight') / 2 + height / 2,
+                            dw = parseInt(size[0]);
+                        dh = parseInt(size[1]);
+                        sh = parseInt(this.image.height);
+                        sw = parseInt(this.image.width);
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        var context = canvas.getContext("2d");
+                        context.drawImage(this.image, 0, 0, sw, sh, dx, dy, dw, dh);
+                        var imageData = canvas.toDataURL('image/jpeg');
+
+                        return imageData;
+                    },
+                    zoomIn: function () {
+                        this.ratio *= 1.1;
+                        this.setBackground();
+                    },
+                    zoomOut: function () {
+                        this.ratio *= 0.9;
+                        this.setBackground();
+                    },
+                    destructor: function () {
+                        if (this.mouseup) this.mouseup.detach()
+                    }
+                });
+        }, '1.0',
+{
+    requires: ['node', 'base']
+});
+
+    })
+</script>
+
+<style>
+    .panel-info {
+    border: none;
+}
+    .customService {
+        /*margin-left: 2%;*/
+        color: #2a6496;
+        cursor: pointer;
+    }
+
+    .imageBox {
+        position: relative;
+        min-height: 250px;
+        min-width: 250px;
+        border: 1px solid #aaa;
+        background: #fff;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        cursor: move;
+    }
+
+        .imageBox .thumbBox {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            margin-top: -100px;
+            margin-left: -100px;
+            box-sizing: border-box;
+            border: 1px solid rgb(102, 102, 102);
+            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+            background: none repeat scroll 0% 0% transparent;
+        }
+
+        .imageBox .spinner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            text-align: center;
+        }
+
+    .LabelAlign {
+        float: right;
+    }
+</style>

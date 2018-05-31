@@ -1,0 +1,107 @@
+﻿@model AgingInHome.Models.ServiceRequestModel
+@{
+    ViewBag.Title = "ServiceRequestDetail";
+    var i = 0;
+}
+
+<div class="Consumercontainer">
+    <div class="innerServiceRequest">
+
+
+
+
+        @*@foreach (var ServiceRequestCategories in @Model.ServiceRequestCategories.Where(s=>s.IsActive!=false).ToList())*@
+        @foreach (var ServiceRequestCategories in @Model.ServiceRequestCategories.ToList())
+        {
+            <div class="row">
+                <div class="col-lg-6 col-sm-6 col-xs-6">
+                    @Html.Label(ServiceRequestCategories.ProviderCategory.CategoryName, new { @style = "font-weight:bolder;font-size:24px" })
+                </div>
+                <div class="col-lg-6 col-sm-6 col-xs-6">
+                    @if (ServiceRequestCategories.IsActive == false)
+                    {
+                        <span class="pull-right">
+                            @Html.Label("Request Cancelled", new { @class = "btn btn-info disabled" })
+                        </span>
+                       
+
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("CancelCategoryRequest", "Consumer", FormMethod.Post))
+                        {
+                            <span class="pull-right">
+                                <input type="submit" name="name" value="Cancel Request" class="btn btn-primary" />
+                                @Html.Hidden("CatId", ServiceRequestCategories.Id)
+                            </span>
+                        }
+                    }
+                   
+                </div>
+            </div>
+
+            
+
+            <table class="table table-responsive table-striped table-hover table-bordered">
+
+                <tbody>
+                    @if (ServiceRequestCategories.ServiceRequestDetails.Count > 0)
+                    {
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Status</th>
+                            <th>Provider Invitation Status</th>
+                        </tr>
+                    </thead>
+
+                        foreach (var ListingDetail in ServiceRequestCategories.ServiceRequestDetails)
+                        {
+                            <tr>
+                                <td>@ListingDetail.ProviderListing.CompanyName</td>
+                                @if (!ListingDetail.Mailrespose == true)
+                                {
+                                    <td>Pending</td>
+                                    <td>Waiting for Provider</td>
+                                }
+                                else
+                                {
+                                    if (ListingDetail.IsProviderInvite == true)
+                                    {
+                                        <td>Accepted</td>
+                                        //<td>@*<button class="btn btn-success">Accept Invitation</button>*@ <button class="btn btn-danger">Reject Invitation</button></td>
+                                        @*<td>Provider Accepted your Invitation Please Check your inbox</td>*@
+                                        <td>
+                                            @Html.Label("providers:") @ListingDetail.ProviderListing.CompanyName,
+                                            @Html.Label("address:") @ListingDetail.ProviderListing.ProviderAddress,
+                                            @Html.Label("Phone number:") @ListingDetail.ProviderListing.ProviderContactNumber
+
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>Rejected</td>
+                                        <td>Provider Rejected your Invitation because of some Reason</td>
+                                    }
+
+                                }
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3"><b>We didn't find any service provider in this category. We will notify you within 7 days with any listing in this category.</b></td>
+                        </tr>
+                    }
+
+                    </tbody>
+                </table>
+        }
+
+
+
+
+    </div>
+</div>

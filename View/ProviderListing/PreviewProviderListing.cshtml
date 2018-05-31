@@ -1,0 +1,410 @@
+﻿@using Microsoft.AspNet.Identity
+@model AgingInHome.Models.ProviderListingModel
+
+@{
+    ViewBag.Title = "Preview Provider Listing";
+    var i = 0;
+    var j = 0;
+}
+@Html.HiddenFor(m => m.Zipcode, new { @id = "postcode" });
+<div class="maincontainer">
+    @using (@Html.BeginForm("SubmitListing", "ProviderListing", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @*@Html.HiddenFor(m => m.ProviderListingId)*@
+        <div class="row">
+            <center>
+                <div id="googleMap" style="width:100%;height:200px;" hidden="hidden">
+
+                </div>
+            </center>
+
+        </div>
+        <div class="row">
+            <div class="pull-right">
+                <button type="submit" class="btn btn-success " style="height: 50px;">Save Listing &nbsp;<i class="fa fa-save"></i></button>
+                <button type="button" id="edit" class="btn btn-primary " style="height: 50px;">Edit Listing &nbsp;<i class="fa fa-edit"></i></button>
+            </div>
+        </div>
+        <div class="row InnerContainer">
+            <div class="col-md-8 ">
+                <div class="row mainContent">
+                    <div class="col-md-4">
+                        <div class="imgDiv">
+
+                            <img src="../Images/ProviderListingImages/@Model.Logo" alt="Alternate Text" width="242" height="178" class="img-responsive" />
+                        </div>
+                        <br />
+                        @if (Model.FacebookURL != null)
+                        {
+                            <a href="http://@Model.FacebookURL"><img src="~/Images/SocialMediaImages/facebook.png" style="margin-top: -3px;" /></a>
+
+                        }
+                        @if (Model.TwitterURL != null)
+                        {
+                            <a href="http://@Model.TwitterURL">
+                                <img src="~/Images/SocialMediaImages/twitterIcon.png" />
+                            </a>
+                        }
+                        @if (Model.GoogleURL != null)
+                        {
+                            <a href="http://@Model.GoogleURL"> <img src="~/Images/SocialMediaImages/GooglePlus.png" /></a>
+                        }
+
+                    </div>
+                    <div class="col-md-7 rightDiv">
+                       <label>@Model.CompanyName</label><br />
+                        <label>@Model.ProviderAddress &nbsp; @Model.ServiceAreas[0].City  @Model.ServiceAreas[0].ZipCode</label><i class="fa fa-map-marker fa-2x" aria-hidden="true" style="cursor:pointer" id="mapdiv"></i><br />
+                        <div class="col-md-7">
+                            <div id="rateYo"></div>
+
+                            &nbsp;<br />
+                            <i class="fa fa-phone fa-2x" aria-hidden="true"></i><label> &nbsp; @Model.ProviderContactNumber</label>
+                        </div>
+                        @*<div class="col-md-4 msgs">
+                                <span>
+                                    @Html.Label("msgez", "50")<br />
+                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                                </span>
+                            </div>&nbsp;
+                            <div class="col-md-4 msgs">
+                                <span>
+                                    @Html.Label("msgez", "10")<br />
+                                    <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                </span>
+                            </div>*@
+
+
+                    </div>
+                </div><br />
+                <div class="blogPart">
+                    <div id="tabs">
+                        <ul>
+                            <li><a href="#tabs-1">About Us</a></li>
+                            <li><a href="#tabs-2">Blog</a></li>
+                            <li><a href="#tabs-3">News</a></li>
+                            <li><a href="#tabs-4">Photos</a></li>
+                            <li><a href="#tabs-5">Videos</a></li>
+                        </ul>
+                        <div id="tabs-1">
+                            <br />
+                            <p>@Model.WhatWeDo</p>
+                            @*<p>@Model.WhenWeDo</p>*@
+                            <p>@Model.WhoWeAre</p>
+                            <p>@Model.WhyWeDo</p>
+                            @*<p>@Model.ServiceDescription</p>*@
+                        </div>
+                        <div id="tabs-2">
+                            
+                        </div>
+                        <div id="tabs-3">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="SimilarProvider">
+                    <div class="col-md-8">
+                        <h4>similar Providers</h4>
+                    </div>
+                    @*<span class="pull-right">@Html.ActionLink("View All", "")</span>*@<br />
+                    <hr />
+
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="ListingRightPanel">
+                    <div class="pull-right">
+                        <i class="fa fa-clock-o fa-5x" aria-hidden="true"></i><br />
+                        <span style="margin-left: 20%;">Hours</span>
+                    </div>
+                    <div class="col-lg-12 col-sm-12 col-sm-12">
+                        <table>
+                            <tr>
+                                <td> Monday :</td>
+                                <td>
+                                    <text>
+                                        @if (Model.hourOfOperation.MonStart == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.MonStart)}
+                                    </text>
+                                    &nbsp; -&nbsp;
+                                    <text>
+                                        @if (Model.hourOfOperation.MonStart == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.MonEnd)}
+                                    </text>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Tuesday :</td>
+                                <td>
+                                    <text>
+                                        @if (Model.hourOfOperation.TueStart == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.TueStart)}
+                                    </text>
+                                    &nbsp;-&nbsp; <text>
+                                        @if (Model.hourOfOperation.TueEnd == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.TueEnd)}
+                                    </text>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Wednesday :</td>
+                                <td>
+                                    <text>
+                                        @if (Model.hourOfOperation.WedStart == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.WedStart)}
+                                    </text>
+                                    &nbsp;-&nbsp; <text>
+                                        @if (Model.hourOfOperation.WedEnd == null)
+                                        {<label>Close</label>}
+                                        else
+                                        {
+                                            @Html.Label(Model.hourOfOperation.WedEnd)}
+                                    </text>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Thrsday :</td>
+                                <td>
+                                    <text>
+                                        @if (Model.hourOfOperation.ThuStart == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.ThuStart)}
+                                    </text>
+                                    &nbsp;-&nbsp; <text>
+                                        @if (Model.hourOfOperation.ThuEnd == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.ThuEnd)}
+                                    </text>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Friday :</td>
+                                <td>
+                                    <text>
+                                        @if (Model.hourOfOperation.FriStart == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.FriStart)}
+                                    </text>
+                                    &nbsp;-&nbsp; <text>
+                                        @if (Model.hourOfOperation.FriEnd == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.FriEnd)}
+                                    </text>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Saturday :
+                                </td>
+                                <td>
+                                    <text>
+                                        @if (Model.hourOfOperation.SatStart == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.SatStart)}
+                                    </text>
+                                    &nbsp;-&nbsp; <text>
+                                        @if (Model.hourOfOperation.SatEnd == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.SatEnd)}
+                                    </text>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Sunday :</td>
+                                <td>
+                                    <text>
+                                        @if (Model.hourOfOperation.SunStart == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.SunStart)}
+                                    </text>
+                                    &nbsp;-&nbsp; <text>
+                                        @if (Model.hourOfOperation.SunEnd == null)
+                                        {<label>Close</label>}
+                                        else
+                                        { @Html.Label(Model.hourOfOperation.SunEnd)}
+                                    </text>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.CategoryId)
+        @Html.HiddenFor(m => m.CommunicationEmail)
+        @Html.HiddenFor(m => m.CompanyName)
+        @Html.HiddenFor(m => m.Experience)
+        @Html.HiddenFor(m => m.FacebookURL)
+        @Html.HiddenFor(m => m.GoogleURL)
+        @Html.HiddenFor(m => m.hourOfOperation.SatStart)
+        @Html.HiddenFor(m => m.hourOfOperation.SatEnd)
+        @Html.HiddenFor(m => m.hourOfOperation.SunEnd)
+        @Html.HiddenFor(m => m.hourOfOperation.SunStart)
+        @Html.HiddenFor(m => m.hourOfOperation.MonStart)
+        @Html.HiddenFor(m => m.hourOfOperation.MonEnd)
+        @Html.HiddenFor(m => m.hourOfOperation.TueStart)
+        @Html.HiddenFor(m => m.hourOfOperation.TueEnd)
+        @Html.HiddenFor(m => m.hourOfOperation.WedEnd)
+        @Html.HiddenFor(m => m.hourOfOperation.WedStart)
+        @Html.HiddenFor(m => m.hourOfOperation.ThuStart)
+        @Html.HiddenFor(m => m.hourOfOperation.ThuEnd)
+        @Html.HiddenFor(m => m.hourOfOperation.FriStart)
+        @Html.HiddenFor(m => m.hourOfOperation.FriEnd)
+        @Html.HiddenFor(m => m.Bitimagestring)
+        @Html.HiddenFor(m => m.Password)
+        @Html.HiddenFor(m => m.PinterestURL)
+        @Html.HiddenFor(m => m.PrimaryEmail)
+        @Html.HiddenFor(m => m.ProviderAddress)
+        @Html.HiddenFor(m=>m.CategoryServiceId)
+        @Html.HiddenFor(m => m.ProviderContactNumber)
+   
+
+        foreach (var area in Model.ServiceAreas)
+        {
+            @Html.Hidden("ServiceAreas[" + i + "].City", area.City)
+            @Html.Hidden("ServiceAreas[" + i + "].ServiceRadius", area.ServiceRadius)
+            @Html.Hidden("ServiceAreas[" + i + "].StateId", area.StateId)
+            @Html.Hidden("ServiceAreas[" + i + "].ZipCode", area.ZipCode)
+            i = i + 1;
+        }
+        foreach (var serviceDetail in Model.ServiceDetails)
+        {
+            @Html.Hidden("ServiceDetails[" + j + "].IsSelected", serviceDetail.IsSelected)
+            @Html.Hidden("ServiceDetails[" + j + "].ServicePrice", serviceDetail.ServicePrice)
+            @Html.Hidden("ServiceDetails[" + j + "].ServiceType", serviceDetail.ServiceType)
+            @Html.Hidden("ServiceDetails[" + j + "].CategoryServiceId", serviceDetail.CategoryServiceId)
+            @Html.Hidden("ServiceDetails[" + j + "].CustomeService", serviceDetail.CustomeService)
+            j = j + 1;
+        }
+      
+        @Html.HiddenFor(m => m.ServiceDescription)
+        @Html.HiddenFor(m => m.ServicePrice)
+        @Html.HiddenFor(m => m.ServicePriceType)
+        @Html.HiddenFor(m => m.TwitterURL)
+        @Html.HiddenFor(m => m.WebsiteURL)
+        @Html.HiddenFor(m => m.WhatWeDo)
+        @Html.HiddenFor(m => m.WhenWeDo)
+        @Html.HiddenFor(m => m.WhoWeAre)
+        @Html.HiddenFor(m => m.WhyWeDo)
+        @Html.HiddenFor(m => m.YearOfExperience)
+        @Html.HiddenFor(m => m.ConfirmPassword)
+        @Html.HiddenFor(m => m.Logo)
+        @Html.HiddenFor(m => m.City)
+        @Html.HiddenFor(m => m.Zipcode)
+        @Html.HiddenFor(m => m.StateId)
+
+
+    }
+</div>
+
+<link href="~/Content/jquery.rateyo.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.rateyo.min.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script>
+    $(function () {
+        //***Google map***//
+        var map;
+        var marker;
+        var mapProp
+        var geocoder = new google.maps.Geocoder();
+        $("#mapdiv").click(function () {
+            $.ajax({
+                url: '@Url.Action("GetZipCoordinates","ProviderListing")',
+                data: { zip: $("#postcode").val() },
+                success: function (result) {
+
+                    var latlong = result.split(',');
+                    lat = latlong[0];
+                    lng = latlong[1];
+
+
+                    var ss = new google.maps.LatLng(lat, lng)
+                    mapProp = {
+                        center: ss,
+                        zoom: 12,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+                    map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+                    var marker = new google.maps.Marker({
+                        position: ss,
+                    });
+
+                    marker.setMap(map);
+                    // callbackFunction(lat, lng);
+
+                }
+            });
+
+            // recenterMap($("#postcode").val());
+            $("#googleMap").attr("hidden", false);
+
+        });
+
+
+
+        //*****End Google Map****//
+
+
+        var ratingvale = 0;
+        //var $rateYo = $("#rateYo").rateYo();
+        $("#tabs").tabs({
+            heightStyle: "content"
+        });
+        $("#edit").click(function () {
+            parent.history.back();
+        });
+
+    });
+</script>
+<style>
+    .ui-widget-content {
+        border: 1px solid #EDEDED;
+    }
+
+    .ui-dialog-osx {
+        -moz-border-radius: 0 0 8px 8px;
+        -webkit-border-radius: 0 0 8px 8px;
+        border-radius: 0 0 8px 8px;
+        border-width: 0 8px 8px 8px;
+    }
+
+    .ui-widget-header {
+        border: none;
+        background: none;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .modal-content .modal-header {
+        background: #EDEDED;
+        color: black;
+    }
+
+    .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+        background: none;
+        /*border:none*/
+    }
+</style>
+

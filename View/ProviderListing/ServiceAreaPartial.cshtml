@@ -1,0 +1,42 @@
+﻿@{ 
+    int count = ViewBag.Count;
+}
+@model AgingInHome.Models.ProviderListingModel
+<div class="row" style="margin:0px">
+    <div class="col-md-3">
+        <div class="form-group">
+            @Html.Label("City")
+            @Html.TextBoxFor(m => m.ServiceAreas[count].City, new { @class = "form-control" })
+
+            @Html.ValidationMessageFor(m => m.ServiceAreas[count].City, "", new { @style = "display: block;" })
+           
+        </div>
+
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            @Html.Label("State")
+            @Html.DropDownList("ServiceAreas["+count+"].StateId", (SelectList)ViewBag.State, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ServiceAreas[count].StateId)
+        </div>
+
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            @Html.Label("Zipcode")
+            @Html.TextBoxFor(m => m.ServiceAreas[count].ZipCode, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ServiceAreas[count].ZipCode)
+        </div>
+
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            @Html.Label("Service Radius")
+            @Html.DropDownListFor(m => m.ServiceAreas[count].ServiceRadius, new SelectList(Model.ServiceRadius, "Key", "Value"), "Select Radius", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ServiceAreas[count].ServiceRadius, "", new { @style = "display: block;" })
+            <span class="customeOther badge pull-right" style="color:white;cursor:pointer;margin: -27px -23px 0 123px;">x</span>
+            <span>Service Area</span>
+        </div>
+
+    </div>
+</div>

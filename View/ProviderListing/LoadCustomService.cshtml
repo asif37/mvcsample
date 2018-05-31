@@ -1,0 +1,29 @@
+﻿@{ 
+    var i = (int)ViewBag.customId;
+}
+<div class="row">
+    <div class="col-lg-5 col-sm-4 col-xs-12">
+        <div class="form-group">
+            @Html.Label("Service Name")
+            <input type="text" name="ServiceDetails[@i].CustomeService" value="" class="form-control"/>
+
+        </div>
+    </div>
+    <div class="">
+        <div class="col-lg-4 col-sm-4 col-xs-12">
+            <select class="form-control" style="margin-top:25px" name="ServiceDetails[@i].ServiceType">
+                <option>Select Service type</option>
+                <option value="hour">Hour</option>
+                <option value="visit">Visit</option>
+                <option value="Service">Service</option>
+            </select>
+        </div>
+        <div class="col-lg-3 col-sm-4 col-xs-12">
+            @Html.Label("Services Price")
+            @Html.TextBox("ServiceDetails[" + @i + "].ServicePrice", null, new { @class = "form-control" })
+            <span class="customeremove badge pull-right" style="color:white;cursor:pointer;margin: -27px -23px 0 123px;">x</span>
+        </div>
+    </div>
+   
+</div>
+<hr />

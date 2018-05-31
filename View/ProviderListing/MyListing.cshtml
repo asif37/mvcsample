@@ -1,0 +1,355 @@
+﻿@using Microsoft.AspNet.Identity
+@model AgingInHome.Models.ProviderListingModel
+@{
+    ViewBag.Title = "ProviderListing";
+    var i = 1;
+
+}
+@*<span hidden="hidden" id="avgrating">@Model.AvgRating</span>*@
+@Html.Hidden("avgrating", Model.AvgRating)
+@Html.Hidden("UserId", User.Identity.GetUserId())
+@if (Model.ProviderListingId != 0)
+{
+<div class="alert alert-info" style="margin-bottom: 0px;text-align: center;">
+    <span>@Html.ActionLink("Edit Listing", "EditProviderListing",null,new { @class="btn btn-primary"})</span>
+    <span>@Html.ActionLink("Delete Listing", "",null, new { @class = "btn btn-danger" })</span>
+    <span>@Html.ActionLink("Preview Listing", "ViewListing", new { CompanyName = Model.CompanyName.Replace(' ','-') }, new { @class = "btn btn-info" })</span>
+    <span>@Html.ActionLink("Promote Listing", "PromoteYourListing", new { ProviderlistingId = Model.ProviderListingId }, new { @class = "btn btn-success" }) </span>
+    <span>@Html.ActionLink("Favorite Detail", "",null, new { @class = "btn btn-default" }) </span>
+    <span>@Html.ActionLink("Rating Detail", "",null, new { @class = "btn btn-primary" })  </span>
+</div>
+}
+<div class="maincontainer">
+    @Html.HiddenFor(m => m.ProviderListingId)
+    @Html.Hidden("CompanyName",Model.CompanyName.Replace(' ', '-'))
+    <div class="row">
+        @if (Model.ProviderListingId!=0)
+    {
+            <div class="col-lg-offset-2 col-lg-8 col-sm-10 col-xs-12">
+                <br />
+                <div class="blogPart">
+                    <div id="tabs">
+                        <ul>
+                            <li><a href="#tabs-1">About Us</a></li>
+                            <li><a href="#tabs-2">Blog</a></li>
+                            <li><a href="#tabs-3">News</a></li>
+                            <li><a href="#tabs-4">Photos</a></li>
+                            <li><a href="#tabs-5">Videos</a></li>
+                        </ul>
+                        <div id="tabs-1">
+                            <br />
+                            <p>@Model.WhatWeDo</p>
+                            <p>@Model.WhenWeDo</p>
+                            <p>@Model.WhoWeAre</p>
+                            @*<p>@Model.WhyWeDo</p>
+                                <p>@Model.ServiceDescription</p>*@
+                        </div>
+                        <div id="tabs-2">
+                            <div class="row">
+                                @Html.CheckBoxFor(m => m.IsBlogShow, new { @class = "TabsStatus" }) &nbsp; Show Blog Tab to public
+                                @Html.ActionLink("Add Post", "AddBlog", "ArticleAndBlogs", new { listingId = Model.ProviderListingId }, new { @class = "btn btn-primary pull-right", @style = "color: white;margin-right: 3 %;" })<br /><br />
+                                @foreach (var blog in Model.ListingBlogs)
+                                {
+                                    <div style="margin:10px">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-3">
+                                                <img src="~/Images/BlogImages/@blog.BlogImage" class="img-circle" width="150" height="150" alt="Image" />
+                                            </div>
+                                            <div class="col-lg-8 col-sm-8">
+                                                <div class="row">
+                                                    @Html.Label("article.ArticleTitle", blog.BlogTitle)
+                                                    <span>
+                                                        @Html.ActionLink("Delete", "DeleteBlog", "ArticleAndBlogs", new { blogId = @blog.ListingBlogId }, new { @class = "btn btn-danger pull-right", @style = "color:white;margin-left: 5px;" }) &nbsp;
+                                                    </span>
+                                                    <span>
+                                                        @Html.ActionLink("Edit", "AddBlog", "ArticleAndBlogs", new { blogId = @blog.ListingBlogId }, new { @class = "btn btn-default pull-right" })
+                                                    </span>
+                                                </div>
+                                                <br />
+                                                <p style="text-align:justify">
+                                                    @blog.BlogDescription
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                }
+                            </div>
+                        </div>
+                        <div id="tabs-3">
+                            <div class="row">
+                                @Html.CheckBoxFor(m => m.IsNewsShow, new { @class = "TabsStatus" }) &nbsp; Show News Tab to public
+                                @Html.ActionLink("Add News", "AddArticle", "ArticleAndBlogs", new { listingId = Model.ProviderListingId }, new { @class = "btn btn-primary pull-right", @style = "color: white;margin-right: 3 %;" })<br /><br />
+                                @foreach (var article in Model.ListingArticles)
+                                {
+                                    <div style="margin:10px">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-sm-3">
+                                                <img src="~/Images/ArticleImages/@article.ArticleImage" class="img-circle" width="150" height="150" alt="Image" />
+                                            </div>
+                                            <div class="col-lg-8 col-sm-8">
+                                                <div class="row">
+                                                    @Html.Label("article.ArticleTitle", article.ArticleTitle)
+                                                    <span>
+                                                        @Html.ActionLink("Delete", "DeleteNews", "ArticleAndBlogs", new { NewsId = @article.ListingArticleId }, new { @class = "btn btn-danger pull-right", @style = "color:white;margin-left: 5px;" }) &nbsp;
+                                                    </span>
+                                                    <span>
+                                                        @Html.ActionLink("Edit", "AddArticle", "ArticleAndBlogs", new { NewsId = @article.ListingArticleId }, new { @class = "btn btn-default pull-right" })
+                                                    </span>
+                                                </div>
+                                                <br />
+                                                <p style="text-align:justify">
+                                                    @article.ArticleDescription
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                }
+                            </div>
+                        </div>
+                        <div id="tabs-4">
+                            <div class="row">
+                                @Html.CheckBoxFor(m => m.IsPhotosShow, new { @class = "TabsStatus" }) &nbsp;Show Photos Tab to public
+                                <span class="pull-right btn btn-primary" id="addImage">Add Image</span>
+                                <br /><br />
+                            </div>
+                            <div class="row">
+                                @foreach (var item in Model.ProviderImageGalaries)
+                                {
+                                    <div class="col-lg-2 col-sm-2 col-xs-3">
+                                        <i class="fa fa-times-circle-o pull-right fa imgdelcontrol" id="@item.Id" style="cursor:pointer"></i>
+                                        <a href="~/Images/ProviderGalaryImages/@item.ImagePath" data-lightbox="roadtrip"><img src="~/Images/ProviderGalaryImages/@item.ImagePath" alt="Alternate Text" class="img-responsive" style="height:auto;max-height:175px;border:1px solid #EDEDED" /></a>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                        <div id="tabs-5">
+                            <div class="row">
+                                @Html.CheckBoxFor(m => m.IsVideoShow, new { @class = "TabsStatus" }) &nbsp;Show Video Tab to public
+                                <span class="pull-right btn btn-primary" id="addvideo">Add Video</span>
+                                <br /><br />
+                            </div>
+                            <div class="row">
+
+                                @foreach (var item in Model.ProviderVideos)
+                                {
+                                    <div>
+                                        <label>Video link @i</label> &nbsp;  <a href="@item.VideoUrl" target="_blank">@item.VideoUrl</a> &nbsp; &nbsp;<i class="fa fa-times-circle-o fa videoDelControl" id="@item.Id" style="cursor:pointer"></i>
+                                    </div>
+                                    i = i + 1;
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+          <h3>No Listing Detail  founds click here to add Listing @Html.ActionLink("Add Listing","Submitlisting","ProviderListing")</h3>
+        }
+
+
+    </div>
+</div>
+<div style="display:none" id="ImageDialog" title="Add Image">
+    @using (Html.BeginForm("AddImage", "ProviderListing", FormMethod.Post, new { enctype = "multipart/form-data", @id = "ImageForm" }))
+    {
+        <input type="file" name="ImageUrl" value="" />
+        @Html.HiddenFor(m => m.ProviderListingId);
+        <br />
+        <input type="submit" name="name" value="Save Image" class="btn btn-success" id="saveimg" />
+    }
+   
+</div>
+<div style="display:none" id="VideoDialog" title="Add Video Link">
+    @using (Html.BeginForm("AddVideo", "ProviderListing", FormMethod.Post, new { @id = "videoForm" }))
+    {
+        <input type="text" name="VideoUrl" value="" class="form-control" id="videoUrl" />
+        @Html.HiddenFor(m => m.ProviderListingId);
+        <br />
+        <input type="submit" name="name" value="Save Video" class="btn btn-success" id="savevideo" />
+    }
+    </div>
+
+</div>
+<br />
+
+<link href="~/Content/jquery.rateyo.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.rateyo.min.js"></script>
+<link href="~/Content/Custom/jquery-ui.min.css" rel="stylesheet" />
+<script src="~/dist/js/lightbox.min.js"></script>
+<link href="~/dist/css/lightbox.min.css" rel="stylesheet" />
+<script>
+    $(function () {
+        
+        function ChangeUrl(page, url) {
+            if (typeof (history.pushState) != "undefined") {
+                var obj = { Page: page, Url: url };
+                history.pushState(obj, obj.Page, obj.Url);
+            } else {
+                alert("Browser does not support HTML5.");
+            }
+        }
+        ChangeUrl('Page1',"MyListing")
+        ChangeUrl('Page1', $("[name='CompanyName']").val())
+        lightbox.option({
+            alwaysShowNavOnTouchDevices: true,
+            wrapAround: true
+        })
+        $(".imgdelcontrol").click(function () {
+            
+            var _imgid = $(this).attr("id");
+            var confrm = confirm("Do you want to delete this Video Link");
+            if (confrm) {
+                $(this).parent().remove();
+           
+            $.ajax({
+                url: '@Url.Action("DeleteImage","ProviderListing")',
+                data: { imgid: _imgid },
+                success: function (result) {
+                    alert("Successfully Deleted");
+                }
+            });
+            }
+
+        });
+        $(".videoDelControl").click(function () {
+            
+            var _Videoid = $(this).attr("id");
+            var confrm = confirm("Do you want to delete this image");
+            if (confrm) {
+                $(this).parent().remove();
+                $.ajax({
+                    url: '@Url.Action("DeleteVideo", "ProviderListing")',
+                    data: { Videoid: _Videoid },
+                    success: function (result) {
+                        alert("Successfully Deleted");
+                    }
+                });
+            }
+        });
+        $("#saveimg").click(function (e) {
+
+            if ($("[type='file']").val() == "") {
+                e.preventDefault();
+                $("[type='file']").css("color", "red")
+            }
+        });
+        $("#savevideo").click(function (e) {
+
+            if ($("#videoUrl").val() == "") {
+                e.preventDefault();
+                $("#videoUrl").css("border-color", "red")
+            }
+        });
+
+        $("#addvideo").click(function (e) {
+
+            e.preventDefault();
+            $("#VideoDialog").dialog({
+                width: 600,
+                height: 180,
+                resizable: false,
+                draggable: false,
+                modal: true,
+            });
+        });
+        $("#addImage").click(function (e) {
+
+            e.preventDefault();
+            $("#ImageDialog").dialog({
+                width: 600,
+                height: 180,
+                resizable: false,
+                draggable: false,
+                modal: true,
+            });
+        });
+        var ratingvale = parseFloat($("#avgrating").val());
+        //var $rateYo = $("#rateYo").rateYo();
+        $("#tabs").tabs({
+            heightStyle: "content"
+        });
+        $("#rateYo").rateYo({
+            rating: ratingvale,
+            fullStar: true,
+            readOnly: true
+
+        });
+        $("#speedrating,#Qualityrating,#Reliabilityrating").rateYo({
+            rating: 0,
+            fullStar: true,
+            starWidth: "20px"
+
+        });
+        /////Change the status of Tabs/////
+        $(".TabsStatus").click(function () {
+            var Permission = confirm("Do you want to change Status")
+            if (Permission) {
+                var _status = $(this).prop('checked');
+                var _feildName = $(this).attr("id");
+                var _providerListingId = $("#ProviderListingId").val();
+                $.ajax({
+                    url: '@Url.Action("ChangeStatusOfTabs","ProviderListing")',
+                    data: { status: _status, feildName: _feildName, providerListingId: _providerListingId },
+                    success: function (result) {
+                        alert("Your Status Successfully Changed");
+                    }
+                });
+
+            }
+            else {
+                $(this).prop("checked", !$(this).prop('checked'))
+                
+            }
+
+
+
+        });
+
+        /////End status of Tabs/////
+
+
+    });
+</script>
+<style>
+    .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+        color: black;
+    }
+
+    .ui-widget-content {
+        border: 1px solid #EDEDED;
+    }
+
+    .ui-dialog-osx {
+        -moz-border-radius: 0 0 8px 8px;
+        -webkit-border-radius: 0 0 8px 8px;
+        border-radius: 0 0 8px 8px;
+        border-width: 0 8px 8px 8px;
+    }
+
+    .ui-widget-header {
+        border: none;
+        background: none;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .modal-content .modal-header {
+        background: #EDEDED;
+        color: black;
+    }
+
+    .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+        background: none;
+        /*border:none*/
+    }
+</style>

@@ -1,0 +1,219 @@
+﻿@using AgingInHome.Helpers
+@model AgingInHome.Models.CheckoutDetailModel
+@{
+    ViewBag.Title = "Checkout";
+}
+
+@using (@Html.BeginForm("Checkout", "Checkout", FormMethod.Post, new { @id = "checkoutForm" }))
+{
+    <div class="maincontainer">
+        <h3>Checkout</h3>
+        <div class="listingDiv article">
+            <div class="row" style="padding: 24px;">
+                <h5 style="margin-left: 17px;">Promote your business to Millions of Homebound Customers</h5><br />
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.Label("First Name")
+                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.FirstName)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Company Name")
+                        @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.CompanyName)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Phone *")
+                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Phone)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Address *")
+                        @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Address)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("State *")
+                        @Html.DropDownList("State", (SelectList)ViewBag.State, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.State)
+                    </div>
+
+
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.Label("Last Name")
+                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.LastName)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Email Address *")
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Email)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Country")
+                        @Html.DropDownList("Country", (SelectList)ViewBag.Countries, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Country)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Town / City *")
+                        @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.City)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Zip *")
+                        @Html.TextBoxFor(m => m.ZipCode, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.ZipCode)
+                    </div>
+                </div>
+            </div>
+            <br />
+            <h5 style="margin-left: 25px;">Your Order</h5>
+            @Html.Partial("~/Views/Shared/_OrderDetail.cshtml", Model.SelectedServices)
+
+            <h5 style="margin-left: 25px;">Card Detail</h5><br />
+            <div class="row CardDetail">
+                <div class="form-control customeformcontrol">
+                    <div class="innerCarddetail">
+                        @Html.RadioButton("payment", "") &nbsp; <span>Credit Card</span>
+                    </div>
+                    <div style="padding:20px">
+                        <span>Pay with your credit card via simplify Commerce by Mastercard</span><br />
+                        <div class="cardinnerdetail">
+                            <div class="form-group">
+                                @Html.Label("Card Number *")
+                                @Html.TextBox("firstName", "", new { @class = "form-control" })
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.Label("Expiry(MM/YY) *")
+                                        @Html.TextBox("firstName", "", new { @class = "form-control" })
+                                    </div>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.Label("Card Code *")
+                                        @Html.TextBox("firstName", "", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <br />
+            <div class="row CardDetail">
+                <div class="form-control customeformcontrol">
+                    <div class="innerCarddetail">
+                        @Html.RadioButton("payment", "") &nbsp; <span>
+                            @*<form action="https://www.sandbox.paypal.com/cgi-bin/webscr">
+                                <input type="hidden" name="cmd" value="_xclick">
+                                <input type="hidden" name="business" value="jeroen@xyz.com">
+                                <input type="hidden" name="item_name" value="Your PDF file without watermarks">
+                                <input type="hidden" name="item_number" value="2ca168a959bb48e28a2ddb4b4640c568">
+                                <input type="hidden" name="amount" value="1.99">
+                                <input type="hidden" name="currency_code" value="USD">
+                                <input type="hidden" name="return" value="http://xslfop.com/order/complete">
+                                <input type="hidden" name="cancel_return" value="http://xslfop.com/order/cancel">
+                                <input type="hidden" name="notify_url" value="http://xslfop.com/order/ipn/">
+                                <input type="hidden" name="no_note" value="1">
+                                <input type="image" name="submit" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_buynowCC_LG.gif" alt="PayPal — The safer, easier way to pay online.">
+                                <img src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" alt="">
+
+                            </form>*@
+
+                        </span><br />
+                        @Html.ActionLink("What is paypal?", "")
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="form-group" style="margin-left: 58%;">
+                @Html.CheckBox("termandcondition") &nbsp; I have read and accepted the terms and conditions.
+                @*<input type="submit" name="name" value="Next" class="btn btn-primary btn-lg " style="padding: 23px;width:125px;text-align:left;padding-left:26px;" />
+                <br /><i class="fa fa-long-arrow-right fa-2x arrowbtn" aria-hidden="true" style="margin-left: 29%;"></i>*@
+                <button type="submit" class="btn btn-primary btn-lg nextbtn" style="padding: 23px;width:125px;text-align:left;padding-left:26px;border-radius: inherit; background:#1F3F88">Next &nbsp;<i class="fa fa-long-arrow-right" aria-hidden="true"></i></button>
+
+
+            </div>
+
+        </div>
+    </div>
+}
+<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" hidden="hidden">
+    <input type="hidden" name="cmd" value="_xclick">
+    <input type="hidden" name="business" value="AggingInHome@gmail.com">
+    <input type="hidden" name="item_name" value="Services">
+    <input type="hidden" name="item_number" value="1">
+    <input type="hidden" name="amount" value="1.99">
+    <input type="hidden" name="currency_code" value="USD">
+    <input type="hidden" name="return" value="http://166.62.88.193/Checkout/Success">
+    <input type="hidden" name="cancel_return" value="http://166.62.88.193/Checkout/Cancel">
+    <input type="hidden" name="notify_url" value="http://xslfop.com/order/ipn/">
+    <input type="hidden" name="no_note" value="1">
+    <input type="submit" id="paypalbtn" value="Buy with additional parameters!" />
+    @*<input type="image" name="submit" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_buynowCC_LG.gif" alt="PayPal — The safer, easier way to pay online.">
+    <img src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" alt="">*@
+
+</form>
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+@*<form action="https://www.paypal.com/cgi-bin/webscr" method="post" hidden="hidden" >
+
+        <input type="hidden" name="cmd" value="_xclick" />
+        <input type="hidden" name="business" value="youremailaddress@yourdomain.com" />
+        <input type="hidden" name="item_name" value="Sercice Promotes" />
+        <input type="hidden" name="amount" value="" />
+        <input type="submit" id="paypalbtn" value="Buy with additional parameters!" />
+    </form>*@
+
+
+@*@Html.PayPalButton(true,
+    PaypalHelpers.EButtonType.BuyNow,
+    "jeroen@xyz.com",
+    "Your PDF file without watermarks",
+    "2ca168a959bb48e28a2ddb4b4640c568",
+    1.99f,
+    PaypalHelpers.ECurrencyCode.USD,
+    "http://xslfop.com/order/complete",
+    "http://xslfop.com/order/cancel",
+    "http://xslfop.com/order/ipn")*@
+
+
+
+
+
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(function () {
+
+        $("[name='amount']").val(parseInt($("#totalprice").text().trim().substr(1)));
+        $(".nextbtn").click(function (e) {
+            ;
+            e.preventDefault();
+            if ($("[name='payment']:checked").next('span').text() != "Credit Card") {
+                //var resutl=$.validator.unobtrusive.parseDynamicContent('#checkoutForm');
+                var result = $("#checkoutForm").validate();
+                if (result.valid()) {
+
+                    $('#paypalbtn').trigger("click");
+                }
+            }
+            else {
+                alert("Please Select the Paypal button");
+            }
+
+
+        })
+
+    })
+</script>

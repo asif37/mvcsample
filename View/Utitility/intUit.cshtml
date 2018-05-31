@@ -1,0 +1,80 @@
+﻿
+<h2>Index</h2>
+<button id="paid">Paid amount</button>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    $(function () {
+        $("#paid").click(function () {
+
+            
+            var card = {
+                "expYear": "2017",
+                "expMonth": "03",
+                "address": {
+                    "region": "NJ",
+                    "postalCode": "07079",
+                    "streetAddress": "350 Mountain View Dr.",
+                    "country": "US",
+                    "city": "South Orange"
+                },
+                "name": "Pye's Cakes",
+                "cvc": "123",
+                "number": "4111111111111111"
+            };
+            $.ajax({
+
+                type: "POST",
+                data: card,
+                url: "https://api.intuit.com/quickbooks/v4/payments/tokens",
+                success: function (data) {
+                    alert(JSON.stringify(data));
+                    authorization(data)
+                },
+                error: function (error) {
+                    alert("Error :" + JSON.stringify(error));
+                   
+            }
+            });
+            function authorization(autorization) {
+                $.ajax({
+
+                    type: "POST",
+                    data: {
+                        "amount": "80.00",
+                        "currency": "USD",
+                        "capture": "false",
+                        "token": autorization
+                    },
+                    url: "https://api.intuit.com/quickbooks/v4/payments/charges",
+                    success: function (data) {
+                        alert(JSON.stringify(data));
+                        Capture(data.id)
+                    },
+                    error: function (error) {
+                        
+                        alert("Error :" + JSON.stringify(error));
+                    
+                    }
+                });
+            }
+            function Capture(id) {
+                $.ajax({
+
+                    type: "POST",
+                    data: {
+                        amount: 80.00
+                    },
+                    url: "https://api.intuit.com/quickbooks/v4/payments/charges/" + id + "/capture",
+                    success: function (data) {
+                        alert(JSON.stringify(data));
+                    },
+                    error: function (error) {
+                        alert("Error :" + JSON.stringify(error));
+                    }
+                });
+            }
+
+        });
+    })
+</script>

@@ -1,0 +1,131 @@
+﻿@model AgingInHome.Models.ServicesModel
+@{
+    ViewBag.Title = "Promote Your Listing";
+}
+
+@using (Html.BeginForm("PromoteYourListing", "ProviderListing", FormMethod.Post))
+{
+    <div class="maincontainer">
+        <h3>Promote Your Listing</h3>
+        <div class="listingDiv">
+            <div style="margin:0px 20px" class="article">
+                <br />
+                <h5>More Clients Can Find You on AgingInHome.com</h5><hr />
+                <p>AgingInHome.com builds a direct connection between local businesses like yours and the caregivers, friends and family of those who are homebound or have limited mobility.</p>
+                <p>Our online marketplace makes your business highly visible online, showcasing your products and services so that they’re easy to find.</p>
+                <br />
+                <h5>Would you like to promote your listing?</h5><hr />
+                @Html.RadioButton("PromoteListing", "No", true, new { @class = "PromoteListing" }) &nbsp; No, I just want a free listing<br />
+                @Html.RadioButton("PromoteListing", "Yes", false, new { @class = "PromoteListing" })&nbsp; Yes, help me promote my business!
+
+                <div class="ExpandableDiv">
+                    <div class="row">
+                        <br />
+                        <div class="col-md-4 col-md-offset-4">
+                            @Html.Label("Budget Amount")
+                            @Html.DropDownList("Budget", new List<SelectListItem>() { new SelectListItem { Text = "$500", Value = "500" }, new SelectListItem { Text = "$100", Value = "100" } }, "Select Budget", new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <h5>Would you like to promote your listing?</h5>
+                    @Html.RadioButton("Subscription", "OnlyOne", true) &nbsp; Only promote ones, don't bill me again when my budget runs out<br />
+                    @Html.RadioButton("Subscription", "Monthly")&nbsp; Charge me monthly and continue promote my listing<br /><br />
+                    <h5>Select Digital Services :</h5>
+                    @*@Html.CheckBox("CheckAll") &nbsp; All Services<br />*@
+                    @foreach (var service in Model.servicelist)
+                    {
+
+                        @*<div class="col-md-4 set-col-padding">@Html.CheckBox("ServicesCheckbox") &nbsp;@service.Name</div>*@
+                        <div class="col-md-4 set-col-padding">
+                            <input type="checkbox" name="checkboxList" class="checkboxList" value="@service.Id" /> &nbsp; @service.Name
+                        </div>
+                    }
+
+                   
+
+                </div>
+
+                @*<input type="button" name="name" value="Next" class="btn btn-primary btn-lg getstartbtn" style="width: 130px;"/>
+                    <br /><i class="fa fa-long-arrow-right fa-2x getstartarrow" aria-hidden="true" style="margin-left: 37%;"></i><br />*@
+                <br /><br /><br />
+                <button type="submit" class="btn btn-primary btn-lg getstartbtn" style="padding: 23px;width:125px;text-align:left;padding-left:26px;border-radius: inherit;">Next &nbsp;<i class="fa fa-long-arrow-right" aria-hidden="true"></i></button><br />
+                <br />
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $(".ExpandableDiv").hide();
+        $(".PromoteListing").click(function () {
+            var d = $(this);
+            d.val() == "No" ? $(".ExpandableDiv").hide() : $(".ExpandableDiv").show();
+        });
+        //$("[name='CheckAll']").click(function () {
+        //    $(".checkboxList").attr("checked", this.checked)
+        //});
+        $(".checkboxList").click(function () {
+            if ($("[name='checkboxList']").length == $("[name='checkboxList']:checked").length) {
+                $("[name='CheckAll']").attr("checked", true);
+            }
+            else {
+                $("[name='CheckAll']").removeAttr("checked");
+            }
+        });
+        $("[type='submit']").click(function (e) {
+            e.preventDefault();
+            var OrderDetail = {
+                ServiceSelectedIds: []
+            };
+            if ($("[name='PromoteListing']:checked").val() == "Yes") {
+
+                if ($("[name='checkboxList']:checked").length == 0) {
+                    alert("Please select the minimum One service");
+                    return false;
+                }
+                if ($("[name='Budget'] option:selected").val() == "") {
+                    $("[name='Budget']").next("span").remove();
+                    $("[name='Budget']").css({ "border-color": "red" }).after("<span style='color:red'>Please Select the budget</span>");
+                    return false;
+                }
+                else {
+                   
+                    OrderDetail.BudgetAmount = parseInt($("[name='Budget']").val());
+                    OrderDetail.PromoteType = $("[name='Subscription']:checked").val();
+                    $("[name='checkboxList']:checked").each(function (index, obj) {
+                        OrderDetail.ServiceSelectedIds.push(parseInt(obj.value));
+                    });
+                    $.ajax({
+                        url: "PromoteYourListing",
+                        type: 'POST',
+                        data: orderModel=OrderDetail,
+                        //contentType: 'application/json; charset=utf-8',
+                        success: function (response) {
+                            window.location.href = '@Url.Action("Checkout", "Checkout")';
+                            //your success code
+                        },
+                        error: function () {
+                            //your error code
+                        }
+                    });
+
+
+                }
+            }
+            else {
+                window.location.href = '@Url.Action("MyListing", "ProviderListing")';
+            }
+
+
+
+        })
+        $("[name='Budget']").change(function () {
+            if ($(this).val() == "") {
+                $("[name='Budget']").next("span").remove();
+                $("[name='Budget']").css({ "border-color": "red" }).after("<span style='color:red'>Please Select the budget</span>");
+            }
+            else {
+                $("[name='Budget']").css({ "border-color": "silver" }).next("span").remove();
+            }
+        })
+    });
+</script>

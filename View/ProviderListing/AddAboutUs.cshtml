@@ -1,0 +1,24 @@
+﻿@model AgingInHome.Models.ListingAboutusModel
+@{
+    ViewBag.Title = "Add AboutUs Description";
+    var listingId = ViewBag.listingId;
+}
+
+<div class="maincontainer">
+    <h3>Add Description</h3>
+    <div class="listingDiv article">
+        @using (Html.BeginForm("AddAboutUs", "ProviderListing", FormMethod.Post))
+        {
+            <input type="hidden" name="ListingId" value="@listingId" />
+            <div style="margin:10px;overflow:hidden">
+                @Html.TextAreaFor(f => f.AboutUsDescription, 15, 10, new { @class = "form-control" })
+                <br />
+                <input type="submit" name="name" value="Save" class="btn btn-success pull-right" />
+                @Html.ActionLink("Cancel", "MyListing", "ProviderListing", null, new { @class = "btn btn-default pull-right" })
+                <br />
+            </div>
+        }
+      
+    </div>
+</div>
+

@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewBag.Title = "Become a Provider";
+}
+
+    <div class="maincontainer">
+        <h3>Become a Provider</h3>
+        <div class="listingDiv">
+            <div class="row">
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <center>
+                        <a href="@Url.Action("SubmitListing")" class="btn btn-primary btn-lg " style="padding: 23px;border-radius: inherit;background-color:#1F3F88;margin-top:10px">
+                            GET STARTED NOW &nbsp;<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </center>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div style="margin:0px 20px" class="article">
+                <h5>Promote Your Business to Millions of Homebound Customers</h5>
+                <hr />
+                <p>Today, a growing population of Americans with limited mobility wants to continue living comfortably at home. But they often have trouble finding the products, services, and providers they need to live independently.</p>
+                <p>That leaves them with no choice but to move into an assisted living community or nursing home. Now, there is another way.</p>
+                <br />
+                <h5>More Clients Can Find You on AgingInHome.com</h5><hr />
+                <p>AgingInHome.com builds a direct connection between local businesses like yours and the caregivers, friends and family of those who are homebound or have limited mobility.</p>
+                <p>Our online marketplace makes your business highly visible online, showcasing your products and services so that they’re easy to find.</p>
+                <p>The easier it is for clients to find you, the more your business grows.</p>
+                <br />
+                <h5>Boost Your Online Presence and Build Your Client Base</h5><hr />
+                <p>We’ll help your business succeed at a fraction of the cost of hiring your own sales department. We’ve been in the healthcare industry for more than 10 years, and we specialize in creating marketing campaigns that get results.</p>
+                <ul>
+                    <li>Grow your online presence</li>
+                    <li>Connect with more clients</li>
+                    <li>Build your business</li>
+                </ul>
+                <br />
+                <h5>Custom Marketing Strategies for Your Business</h5><hr />
+                <p>Listing your business on AgingInHome.com is just the beginning.</p>
+                <p>We also offer a variety of proven services to promote your business and connect you with more clients:</p>
+                <ul>
+                    <li>Advertising</li>
+                    <li>PPC ad campaign management</li>
+                    <li>Social media management: Facebook, Twitter, etc.</li>
+                    <li>Content marketing</li>
+                    <li>Direct mail</li>
+                </ul>
+                <p>We take a proactive approach to building a coherent web strategy and marketing campaign tailored to your business.</p>
+                <br />
+                <h5>Get Your Business Listed With Us</h5><hr />
+                <p>AgingInHome.com represents providers in more than 30 categories, including:</p>
+                <div class="row liformating">
+                    <ul>
+                        @foreach (var item in ViewBag.CategoryList)
+                    {
+                            <div class="col-md-6">
+                                <li>@item.CategoryName</li>
+                            </div>
+
+                    }
+                    </ul>
+                </div>
+                <br />
+                <h5>Making a Difference, One by One</h5><hr />
+                <p>We work directly with clients and caregivers, connecting them one-on-one with local providers like you who offer the products and services necessary for those with limited mobility to stay at home.</p>
+                <p>Our approach gives you proven results. We believe it’s the right way to help people live at home safely, gracefully, and with dignity.</p>
+                <br />
+                <h5>It's Easy to Get Started</h5><hr />
+                <p>We make it easy to multiply your marketing efforts. Sign up with AgingInHome.com today and promote your business to millions of potential new clients.</p>
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12" style="margin-left: -6%;">
+                        <center>
+                            <a href="@Url.Action("SubmitListing")" class="btn btn-primary btn-lg " style="padding: 23px;border-radius: inherit;background-color:#1F3F88;margin-top:10px">
+                                GET STARTED NOW &nbsp;<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                            </a>
+                        </center>
+                    </div>
+                </div>
+                @*<a href="@Url.Action("SubmitListing")" class="btn btn-primary btn-lg getstartbtn" style="padding: 23px;width: 252px;text-align:left;padding-left:26px;border-radius: inherit;">
+                    GET STARTED NOW &nbsp;<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                </a>*@
+
+            </div>
+            <br />
+        </div>
+    </div>
+
+<style>
+     p {
+    color: #000;
+    font-size: 18px;
+    font-weight: 600;
+}
+     li{
+    color: #000;
+    font-weight: 600;
+    font-size: small;
+     }
+</style>
